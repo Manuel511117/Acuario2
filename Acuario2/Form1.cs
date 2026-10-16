@@ -24,9 +24,8 @@ namespace Acuario2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            axWindowsMediaPlayer1.URL = @"C:\Users\banze\Downloads\11342033-hd_1920_1080_30fps.mp4";
+            axWindowsMediaPlayer1.URL = Application.StartupPath + @"\11342033-hd_1920_1080_30fps.mp4";
             axWindowsMediaPlayer1.Ctlcontrols.play();
         }
-
     }
 }
