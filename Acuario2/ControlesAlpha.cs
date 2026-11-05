@@ -175,11 +175,22 @@ namespace Acuario2
 
     public class VeloAlpha : CapaAlpha
     {
+        private const int WS_EX_TRANSPARENT = 0x00000020;
         private readonly Color _color;
 
         public VeloAlpha(Color color)
         {
             _color = color;
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= WS_EX_TRANSPARENT;
+                return cp;
+            }
         }
 
         protected override void Dibujar(Graphics g)

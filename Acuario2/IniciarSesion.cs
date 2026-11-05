@@ -26,6 +26,16 @@ namespace Acuario2
             axPlayer.OpenStateChange += axPlayer_OpenStateChange;
             axPlayer.URL = VideoHelper.RutaVideo();
             Reorganizar();
+
+            tarjeta.BringToFront();
+            txtUsuario.Focus();
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            tarjeta.BringToFront();
+            txtUsuario.Focus();
         }
 
         private void axPlayer_OpenStateChange(object sender, AxWMPLib._WMPOCXEvents_OpenStateChangeEvent e)
@@ -77,21 +87,35 @@ namespace Acuario2
 
             tarjeta.Location = new Point((ClientSize.Width - tarjeta.Width) / 2,
                                          (ClientSize.Height - tarjeta.Height) / 2);
+            tarjeta.BringToFront();
         }
 
         private void btnEntrar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtClave.Text))
+            string usuario = txtUsuario.Text.Trim();
+            string clave = txtClave.Text;
+
+            if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(clave))
             {
                 lblError.Text = "Ingrese usuario y contraseña.";
                 lblError.Visible = true;
                 return;
             }
 
-            lblError.Visible = false;
-            Form1 principal = new Form1();
-            principal.Show();
-            this.Close();
+            string mensaje;
+            if (ConexionDB.ValidarUsuario(usuario, clave, out mensaje))
+            {
+                lblError.Visible = false;
+                Form1 principal = new Form1();
+                principal.Usuario = usuario;
+                principal.Show();
+                this.Close();
+            }
+            else
+            {
+                lblError.Text = mensaje;
+                lblError.Visible = true;
+            }
         }
 
         private void lblVolver_Click(object sender, EventArgs e)
@@ -107,6 +131,10 @@ namespace Acuario2
             {
                 lblVolver_Click(sender, e);
             }
+        }
+
+        private void txtClave_TextChanged(object sender, EventArgs e)
+        {
         }
     }
 }
