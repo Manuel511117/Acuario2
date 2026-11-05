@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -8,7 +9,7 @@ namespace Acuario2
 {
     /// <summary>
     /// Gráfica de barras dibujada a mano (vertical u horizontal) con la paleta del
-    /// mockup. No usa DataVisualization: control total del aspecto y cero referencias.
+    /// mockup. No usa DataVisualization: control total del aspecto y cero dependencias pesadas.
     /// </summary>
     public class GraficaBarras : Control
     {
@@ -31,6 +32,17 @@ namespace Acuario2
             Font = UiUtil.Fuente(8.5f, FontStyle.Regular);
         }
 
+        private bool EnDiseno
+        {
+            get
+            {
+                if (DesignMode) return true;
+                if (CapaAlpha.EsModoDisenoStatic) return true;
+                if (Site != null && Site.DesignMode) return true;
+                return false;
+            }
+        }
+
         /// <summary>Asigna los datos a representar (etiqueta + valor).</summary>
         public void Asignar(IEnumerable<DatoGrafica> datos)
         {
@@ -42,20 +54,35 @@ namespace Acuario2
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+            if (Width <= 0 || Height <= 0) return;
+
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             if (_datos.Count == 0)
             {
+                if (EnDiseno)
+                {
+                    List<DatoGrafica> muestra = new List<DatoGrafica>
+                    {
+                        new DatoGrafica { Etiqueta = "Item 1", Valor = 30 },
+                        new DatoGrafica { Etiqueta = "Item 2", Valor = 50 },
+                        new DatoGrafica { Etiqueta = "Item 3", Valor = 20 }
+                    };
+                    if (Horizontal) PintarHorizontal(g, muestra);
+                    else PintarVertical(g, muestra);
+                    return;
+                }
+
                 TextRenderer.DrawText(g, "Sin datos disponibles", Font, ClientRectangle,
                     Color.FromArgb(150, 165, 178),
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
                 return;
             }
 
-            if (Horizontal) PintarHorizontal(g);
-            else PintarVertical(g);
+            if (Horizontal) PintarHorizontal(g, _datos);
+            else PintarVertical(g, _datos);
         }
 
         private int IndiceMejor(List<DatoGrafica> datos)
@@ -66,14 +93,16 @@ namespace Acuario2
             return mejor;
         }
 
-        private void PintarVertical(Graphics g)
+        private void PintarVertical(Graphics g, List<DatoGrafica> lista)
         {
-            List<DatoGrafica> datos = _datos.Count > TopeEtiquetas ? _datos.GetRange(0, TopeEtiquetas) : _datos;
+            List<DatoGrafica> datos = lista.Count > TopeEtiquetas ? lista.GetRange(0, TopeEtiquetas) : lista;
             double max = 1;
             foreach (DatoGrafica d in datos) max = Math.Max(max, d.Valor);
 
             Rectangle area = new Rectangle(8, 26, Math.Max(20, Width - 16), Math.Max(30, Height - 50));
             int n = datos.Count;
+            if (n == 0) return;
+
             int hueco = 14;
             int ancho = (area.Width - hueco * (n + 1)) / n;
             if (ancho < 8)
@@ -113,13 +142,15 @@ namespace Acuario2
                 g.DrawLine(pluma, area.X, area.Bottom + 1, area.Right, area.Bottom + 1);
         }
 
-        private void PintarHorizontal(Graphics g)
+        private void PintarHorizontal(Graphics g, List<DatoGrafica> lista)
         {
-            List<DatoGrafica> datos = _datos.Count > TopeEtiquetas ? _datos.GetRange(0, TopeEtiquetas) : _datos;
+            List<DatoGrafica> datos = lista.Count > TopeEtiquetas ? lista.GetRange(0, TopeEtiquetas) : lista;
             double max = 1;
             foreach (DatoGrafica d in datos) max = Math.Max(max, d.Valor);
 
             int n = datos.Count;
+            if (n == 0) return;
+
             int altoFila = Math.Max(16, (Height - 2) / n);
             int anchoEtiqueta = Math.Max(56, (int)(Width * 0.33));
             int xBarra = anchoEtiqueta + 8;

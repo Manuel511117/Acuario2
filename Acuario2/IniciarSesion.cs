@@ -17,7 +17,7 @@ namespace Acuario2
 
         private void IniciarSesion_Load(object sender, EventArgs e)
         {
-            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
+            if (DesignMode || CapaAlpha.EsModoDisenoStatic) return;
             axPlayer.uiMode = "none";
             axPlayer.settings.autoStart = true;
             axPlayer.settings.setMode("loop", true);

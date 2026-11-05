@@ -53,11 +53,33 @@ namespace Acuario2
             TabStop = false;
         }
 
-        private bool EnDiseno
+        /// <summary>
+        /// Detecta si el control se está ejecutando en el entorno del diseñador de Visual Studio.
+        /// </summary>
+        public static bool EsModoDisenoStatic
         {
             get
             {
                 if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+                try
+                {
+                    string proc = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+                    if (proc.IndexOf("devenv", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        proc.IndexOf("DesignToolsServer", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        proc.IndexOf("Blend", StringComparison.OrdinalIgnoreCase) >= 0)
+                        return true;
+                }
+                catch { }
+                return false;
+            }
+        }
+
+        protected bool EnDiseno
+        {
+            get
+            {
+                if (DesignMode) return true;
+                if (EsModoDisenoStatic) return true;
                 if (Site != null && Site.DesignMode) return true;
                 Control padre = Parent;
                 while (padre != null)
@@ -82,13 +104,18 @@ namespace Acuario2
             }
         }
 
-        protected override void OnPaintBackground(PaintEventArgs pevent) { }
+        protected override void OnPaintBackground(PaintEventArgs pevent)
+        {
+            if (EnDiseno)
+            {
+                base.OnPaintBackground(pevent);
+            }
+        }
 
         protected sealed override void OnPaint(PaintEventArgs e)
         {
             if (EnDiseno)
             {
-                e.Graphics.Clear(BackColor);
                 Dibujar(e.Graphics);
                 return;
             }
@@ -98,39 +125,46 @@ namespace Acuario2
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            Aplicar();
+            if (!EnDiseno) Aplicar();
         }
 
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            Aplicar();
+            if (!EnDiseno) Aplicar();
+            else Invalidate();
         }
 
         protected override void OnLocationChanged(EventArgs e)
         {
             base.OnLocationChanged(e);
-            Aplicar();
+            if (!EnDiseno) Aplicar();
+            else Invalidate();
         }
 
         private void Aplicar()
         {
-            if (Width <= 0 || Height <= 0 || !IsHandleCreated) return;
             if (EnDiseno) return;
+            if (Width <= 0 || Height <= 0 || !IsHandleCreated) return;
 
-            using (Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb))
+            try
             {
-                using (Graphics g = Graphics.FromImage(bmp))
+                using (Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb))
                 {
-                    g.Clear(Color.Transparent);
-                    Dibujar(g);
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        g.Clear(Color.Transparent);
+                        Dibujar(g);
+                    }
+                    AplicarULW(bmp);
                 }
-                AplicarULW(bmp);
             }
+            catch { }
         }
 
         private bool AplicarULW(Bitmap bmp)
         {
+            if (EnDiseno || !IsHandleCreated) return false;
             bool resultado = false;
             IntPtr hBitmap = bmp.GetHbitmap(Color.FromArgb(0, 0, 0));
             IntPtr screenDc = GetDC(IntPtr.Zero);
@@ -150,6 +184,7 @@ namespace Acuario2
                 };
                 resultado = UpdateLayeredWindow(Handle, screenDc, ref dst, ref size, memDc, ref src, 0, ref blend, ULW_ALPHA);
             }
+            catch { }
             finally
             {
                 SelectObject(memDc, old);
@@ -176,11 +211,22 @@ namespace Acuario2
     public class VeloAlpha : CapaAlpha
     {
         private const int WS_EX_TRANSPARENT = 0x00000020;
-        private readonly Color _color;
+        private Color _color;
+
+        public VeloAlpha() : this(Color.FromArgb(160, 3, 8, 16))
+        {
+        }
 
         public VeloAlpha(Color color)
         {
             _color = color;
+        }
+
+        [Category("Appearance")]
+        public Color ColorVelo
+        {
+            get { return _color; }
+            set { _color = value; Refrescar(); }
         }
 
         protected override CreateParams CreateParams
@@ -188,7 +234,10 @@ namespace Acuario2
             get
             {
                 CreateParams cp = base.CreateParams;
-                cp.ExStyle |= WS_EX_TRANSPARENT;
+                if (!EnDiseno)
+                {
+                    cp.ExStyle |= WS_EX_TRANSPARENT;
+                }
                 return cp;
             }
         }
@@ -208,6 +257,10 @@ namespace Acuario2
         private Font _fuente = new Font("Segoe UI", 14f, FontStyle.Bold);
         private Color _colorTexto = Color.White;
         private ContentAlignment _alineacion = ContentAlignment.MiddleCenter;
+
+        public EtiquetaAlpha()
+        {
+        }
 
         public string Texto
         {
@@ -330,7 +383,7 @@ namespace Acuario2
         protected override void Dibujar(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            Rectangle area = new Rectangle(1, 1, Width - 3, Height - 3);
+            Rectangle area = new Rectangle(1, 1, Math.Max(1, Width - 3), Math.Max(1, Height - 3));
 
             using (GraphicsPath ruta = RutaRedondeada(area, _radio))
             {
@@ -393,28 +446,54 @@ namespace Acuario2
     {
         public int Radio = 16;
         public Color ColorBorde = Color.FromArgb(255, 46, 196, 182);
-        private GraphicsPath _ruta;
 
         public PanelRedondeado()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint |
-                     ControlStyles.OptimizedDoubleBuffer, true);
+                     ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+        }
+
+        private bool EnDiseno
+        {
+            get
+            {
+                if (DesignMode) return true;
+                if (CapaAlpha.EsModoDisenoStatic) return true;
+                if (Site != null && Site.DesignMode) return true;
+                return false;
+            }
         }
 
         protected override void OnResize(EventArgs eventargs)
         {
             base.OnResize(eventargs);
-            if (_ruta != null) _ruta.Dispose();
-            _ruta = Ruta();
-            Region nueva = new Region(_ruta);
-            Region anterior = Region;
-            Region = nueva;
-            if (anterior != null) anterior.Dispose();
+            if (Width <= 2 || Height <= 2) return;
+
+            // En modo diseño de Visual Studio no modificamos Region
+            // para no interferir con los manejadores de selección y redimensionamiento.
+            if (EnDiseno)
+            {
+                Invalidate();
+                return;
+            }
+
+            try
+            {
+                using (GraphicsPath p = Ruta())
+                {
+                    Region nueva = new Region(p);
+                    Region anterior = Region;
+                    Region = nueva;
+                    if (anterior != null) anterior.Dispose();
+                }
+            }
+            catch { }
+            Invalidate();
         }
 
         private GraphicsPath Ruta()
         {
-            Rectangle r = new Rectangle(0, 0, Width, Height);
+            Rectangle r = new Rectangle(0, 0, Math.Max(1, Width), Math.Max(1, Height));
             int d = Math.Min(Radio * 2, Math.Min(r.Width, r.Height));
             GraphicsPath path = new GraphicsPath();
             if (d <= 2)
@@ -433,21 +512,25 @@ namespace Acuario2
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            if (_ruta == null) _ruta = Ruta();
+            base.OnPaintBackground(e);
+            if (Width <= 0 || Height <= 0) return;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using (GraphicsPath p = Ruta())
             using (SolidBrush b = new SolidBrush(BackColor))
             {
-                e.Graphics.FillPath(b, _ruta);
+                e.Graphics.FillPath(b, p);
             }
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (_ruta == null) _ruta = Ruta();
+            base.OnPaint(e);
+            if (Width <= 0 || Height <= 0) return;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            using (Pen p = new Pen(ColorBorde, 2f))
+            using (GraphicsPath p = Ruta())
+            using (Pen pen = new Pen(ColorBorde, 2f))
             {
-                e.Graphics.DrawPath(p, _ruta);
+                e.Graphics.DrawPath(pen, p);
             }
         }
     }

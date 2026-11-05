@@ -13,6 +13,10 @@ namespace Acuario2
         private readonly PictureBox _pic;
         private readonly Label _lblInfo;
 
+        public VisorImagen() : this("Vista previa", "")
+        {
+        }
+
         public VisorImagen(string titulo, string rutaRelativa)
         {
             string nombre = string.IsNullOrWhiteSpace(titulo) ? "producto" : titulo;
