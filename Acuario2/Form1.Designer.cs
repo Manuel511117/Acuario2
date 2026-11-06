@@ -28,6 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panLateral = new System.Windows.Forms.Panel();
             this.btnSalir = new System.Windows.Forms.Button();
             this.btnConfig = new System.Windows.Forms.Button();
@@ -41,6 +47,20 @@
             this.lblTitulo = new System.Windows.Forms.Label();
             this.panContenido = new System.Windows.Forms.Panel();
             this.panDashboard = new System.Windows.Forms.Panel();
+            this.panInventario = new System.Windows.Forms.Panel();
+            this.dgvProductos = new System.Windows.Forms.DataGridView();
+            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEspecie = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colCantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colPrecio = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colVer = new System.Windows.Forms.DataGridViewImageColumn();
+            this.colEstado = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEditar = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.colEliminar = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.lblAviso = new System.Windows.Forms.Label();
+            this.btnActualizar = new System.Windows.Forms.Button();
+            this.btnAgregar = new System.Windows.Forms.Button();
             this.panValor = new Acuario2.PanelRedondeado();
             this.grafValor = new Acuario2.GraficaBarras();
             this.lblValorTitulo = new System.Windows.Forms.Label();
@@ -73,20 +93,6 @@
             this.lblKpi1Valor = new System.Windows.Forms.Label();
             this.lblKpi1Titulo = new System.Windows.Forms.Label();
             this.panBarra1 = new System.Windows.Forms.Panel();
-            this.panInventario = new System.Windows.Forms.Panel();
-            this.dgvProductos = new System.Windows.Forms.DataGridView();
-            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colEspecie = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colCantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colPrecio = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVer = new System.Windows.Forms.DataGridViewImageColumn();
-            this.colEstado = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colEditar = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.colEliminar = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.lblAviso = new System.Windows.Forms.Label();
-            this.btnActualizar = new System.Windows.Forms.Button();
-            this.btnAgregar = new System.Windows.Forms.Button();
             this.panFiltro = new Acuario2.PanelRedondeado();
             this.cboFiltro = new System.Windows.Forms.ComboBox();
             this.picFiltro = new System.Windows.Forms.PictureBox();
@@ -99,6 +105,8 @@
             this.panUsuario.SuspendLayout();
             this.panContenido.SuspendLayout();
             this.panDashboard.SuspendLayout();
+            this.panInventario.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.panValor.SuspendLayout();
             this.panTop5.SuspendLayout();
             this.panAlertas.SuspendLayout();
@@ -111,17 +119,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.picKpi2)).BeginInit();
             this.panKpi1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picKpi1)).BeginInit();
-            this.panInventario.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.panFiltro.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFiltro)).BeginInit();
             this.panBuscador.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLupa)).BeginInit();
             this.SuspendLayout();
             // 
             // panLateral
             // 
             this.panLateral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.panLateral.BackColor = System.Drawing.Color.FromArgb(3, 50, 90);
+            this.panLateral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
             this.panLateral.Controls.Add(this.btnSalir);
             this.panLateral.Controls.Add(this.btnConfig);
             this.panLateral.Controls.Add(this.btnReportes);
@@ -135,12 +143,11 @@
             // 
             // btnSalir
             // 
-            this.btnSalir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSalir.BackColor = System.Drawing.Color.FromArgb(2, 74, 108);
+            this.btnSalir.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(74)))), ((int)(((byte)(108)))));
             this.btnSalir.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSalir.FlatAppearance.BorderSize = 0;
-            this.btnSalir.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(1, 96, 136);
-            this.btnSalir.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(3, 92, 131);
+            this.btnSalir.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(96)))), ((int)(((byte)(136)))));
+            this.btnSalir.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(92)))), ((int)(((byte)(131)))));
             this.btnSalir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSalir.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnSalir.ForeColor = System.Drawing.Color.White;
@@ -151,18 +158,18 @@
             this.btnSalir.TabIndex = 5;
             this.btnSalir.TabStop = false;
             this.btnSalir.Text = "Cerrar sesión";
-            this.btnSalir.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnSalir.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSalir.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnSalir.UseVisualStyleBackColor = false;
             this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
             // 
             // btnConfig
             // 
-            this.btnConfig.BackColor = System.Drawing.Color.FromArgb(2, 74, 108);
+            this.btnConfig.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(74)))), ((int)(((byte)(108)))));
             this.btnConfig.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnConfig.FlatAppearance.BorderSize = 0;
-            this.btnConfig.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(1, 96, 136);
-            this.btnConfig.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(3, 92, 131);
+            this.btnConfig.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(96)))), ((int)(((byte)(136)))));
+            this.btnConfig.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(92)))), ((int)(((byte)(131)))));
             this.btnConfig.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnConfig.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnConfig.ForeColor = System.Drawing.Color.White;
@@ -173,18 +180,18 @@
             this.btnConfig.TabIndex = 4;
             this.btnConfig.TabStop = false;
             this.btnConfig.Text = "Configuración";
-            this.btnConfig.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnConfig.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnConfig.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnConfig.UseVisualStyleBackColor = false;
             this.btnConfig.Click += new System.EventHandler(this.btnConfig_Click);
             // 
             // btnReportes
             // 
-            this.btnReportes.BackColor = System.Drawing.Color.FromArgb(2, 74, 108);
+            this.btnReportes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(74)))), ((int)(((byte)(108)))));
             this.btnReportes.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnReportes.FlatAppearance.BorderSize = 0;
-            this.btnReportes.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(1, 96, 136);
-            this.btnReportes.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(3, 92, 131);
+            this.btnReportes.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(96)))), ((int)(((byte)(136)))));
+            this.btnReportes.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(92)))), ((int)(((byte)(131)))));
             this.btnReportes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReportes.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnReportes.ForeColor = System.Drawing.Color.White;
@@ -195,18 +202,18 @@
             this.btnReportes.TabIndex = 3;
             this.btnReportes.TabStop = false;
             this.btnReportes.Text = "Reportes";
-            this.btnReportes.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnReportes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnReportes.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnReportes.UseVisualStyleBackColor = false;
             this.btnReportes.Click += new System.EventHandler(this.btnReportes_Click);
             // 
             // btnInventario
             // 
-            this.btnInventario.BackColor = System.Drawing.Color.FromArgb(2, 74, 108);
+            this.btnInventario.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(74)))), ((int)(((byte)(108)))));
             this.btnInventario.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnInventario.FlatAppearance.BorderSize = 0;
-            this.btnInventario.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(1, 96, 136);
-            this.btnInventario.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(3, 92, 131);
+            this.btnInventario.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(96)))), ((int)(((byte)(136)))));
+            this.btnInventario.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(92)))), ((int)(((byte)(131)))));
             this.btnInventario.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnInventario.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnInventario.ForeColor = System.Drawing.Color.White;
@@ -217,18 +224,18 @@
             this.btnInventario.TabIndex = 2;
             this.btnInventario.TabStop = false;
             this.btnInventario.Text = "Inventario";
-            this.btnInventario.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnInventario.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnInventario.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnInventario.UseVisualStyleBackColor = false;
             this.btnInventario.Click += new System.EventHandler(this.btnInventario_Click);
             // 
             // btnInicio
             // 
-            this.btnInicio.BackColor = System.Drawing.Color.FromArgb(1, 112, 137);
+            this.btnInicio.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(112)))), ((int)(((byte)(137)))));
             this.btnInicio.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnInicio.FlatAppearance.BorderSize = 0;
-            this.btnInicio.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(1, 96, 136);
-            this.btnInicio.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(2, 133, 161);
+            this.btnInicio.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(96)))), ((int)(((byte)(136)))));
+            this.btnInicio.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(133)))), ((int)(((byte)(161)))));
             this.btnInicio.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnInicio.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnInicio.ForeColor = System.Drawing.Color.White;
@@ -239,8 +246,8 @@
             this.btnInicio.TabIndex = 1;
             this.btnInicio.TabStop = false;
             this.btnInicio.Text = "Dashboard";
-            this.btnInicio.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnInicio.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnInicio.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnInicio.UseVisualStyleBackColor = false;
             this.btnInicio.Click += new System.EventHandler(this.btnInicio_Click);
             // 
@@ -257,7 +264,7 @@
             // 
             this.panTopBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panTopBar.BackColor = System.Drawing.Color.FromArgb(3, 50, 90);
+            this.panTopBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
             this.panTopBar.Controls.Add(this.panUsuario);
             this.panTopBar.Controls.Add(this.lblTitulo);
             this.panTopBar.Location = new System.Drawing.Point(260, 0);
@@ -268,7 +275,7 @@
             // panUsuario
             // 
             this.panUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panUsuario.BackColor = System.Drawing.Color.FromArgb(54, 91, 123);
+            this.panUsuario.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(91)))), ((int)(((byte)(123)))));
             this.panUsuario.Controls.Add(this.lblUsuario);
             this.panUsuario.Location = new System.Drawing.Point(850, 32);
             this.panUsuario.Name = "panUsuario";
@@ -278,8 +285,8 @@
             // lblUsuario
             // 
             this.lblUsuario.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblUsuario.ForeColor = System.Drawing.Color.White;
             this.lblUsuario.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
+            this.lblUsuario.ForeColor = System.Drawing.Color.White;
             this.lblUsuario.Location = new System.Drawing.Point(0, 0);
             this.lblUsuario.Name = "lblUsuario";
             this.lblUsuario.Size = new System.Drawing.Size(150, 42);
@@ -292,7 +299,7 @@
             this.lblTitulo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTitulo.BackColor = System.Drawing.Color.FromArgb(3, 50, 90);
+            this.lblTitulo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = System.Drawing.Color.White;
             this.lblTitulo.Location = new System.Drawing.Point(0, 0);
@@ -307,7 +314,7 @@
             this.panContenido.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panContenido.BackColor = System.Drawing.Color.FromArgb(245, 248, 250);
+            this.panContenido.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
             this.panContenido.Controls.Add(this.panDashboard);
             this.panContenido.Controls.Add(this.panInventario);
             this.panContenido.Location = new System.Drawing.Point(260, 108);
@@ -320,7 +327,7 @@
             this.panDashboard.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panDashboard.BackColor = System.Drawing.Color.FromArgb(245, 248, 250);
+            this.panDashboard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
             this.panDashboard.Controls.Add(this.panValor);
             this.panDashboard.Controls.Add(this.panTop5);
             this.panDashboard.Controls.Add(this.panAlertas);
@@ -334,399 +341,12 @@
             this.panDashboard.Size = new System.Drawing.Size(1020, 541);
             this.panDashboard.TabIndex = 0;
             // 
-            // panValor
-            // 
-            this.panValor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panValor.BackColor = System.Drawing.Color.White;
-            this.panValor.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panValor.Controls.Add(this.grafValor);
-            this.panValor.Controls.Add(this.lblValorTitulo);
-            this.panValor.Location = new System.Drawing.Point(686, 342);
-            this.panValor.Name = "panValor";
-            this.panValor.Radio = 10;
-            this.panValor.Size = new System.Drawing.Size(312, 177);
-            this.panValor.TabIndex = 7;
-            // 
-            // grafValor
-            // 
-            this.grafValor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grafValor.BackColor = System.Drawing.Color.White;
-            this.grafValor.ColorBarra = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.grafValor.ColorDestacado = System.Drawing.Color.FromArgb(4, 175, 182);
-            this.grafValor.Formato = "\"$\"#,##0";
-            this.grafValor.Horizontal = true;
-            this.grafValor.Location = new System.Drawing.Point(14, 38);
-            this.grafValor.Name = "grafValor";
-            this.grafValor.Size = new System.Drawing.Size(284, 127);
-            this.grafValor.TabIndex = 1;
-            this.grafValor.TopeEtiquetas = 4;
-            // 
-            // lblValorTitulo
-            // 
-            this.lblValorTitulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblValorTitulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblValorTitulo.Location = new System.Drawing.Point(16, 10);
-            this.lblValorTitulo.Name = "lblValorTitulo";
-            this.lblValorTitulo.Size = new System.Drawing.Size(280, 24);
-            this.lblValorTitulo.TabIndex = 0;
-            this.lblValorTitulo.Text = "Valor por especie";
-            this.lblValorTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panTop5
-            // 
-            this.panTop5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panTop5.BackColor = System.Drawing.Color.White;
-            this.panTop5.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panTop5.Controls.Add(this.grafTop5);
-            this.panTop5.Controls.Add(this.lblTop5Titulo);
-            this.panTop5.Location = new System.Drawing.Point(686, 150);
-            this.panTop5.Name = "panTop5";
-            this.panTop5.Radio = 10;
-            this.panTop5.Size = new System.Drawing.Size(312, 176);
-            this.panTop5.TabIndex = 6;
-            // 
-            // grafTop5
-            // 
-            this.grafTop5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grafTop5.BackColor = System.Drawing.Color.White;
-            this.grafTop5.ColorBarra = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.grafTop5.ColorDestacado = System.Drawing.Color.FromArgb(4, 175, 182);
-            this.grafTop5.Formato = "\"$\"#,##0";
-            this.grafTop5.Horizontal = true;
-            this.grafTop5.Location = new System.Drawing.Point(14, 38);
-            this.grafTop5.Name = "grafTop5";
-            this.grafTop5.Size = new System.Drawing.Size(284, 126);
-            this.grafTop5.TabIndex = 1;
-            this.grafTop5.TopeEtiquetas = 5;
-            // 
-            // lblTop5Titulo
-            // 
-            this.lblTop5Titulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTop5Titulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblTop5Titulo.Location = new System.Drawing.Point(16, 10);
-            this.lblTop5Titulo.Name = "lblTop5Titulo";
-            this.lblTop5Titulo.Size = new System.Drawing.Size(280, 24);
-            this.lblTop5Titulo.TabIndex = 0;
-            this.lblTop5Titulo.Text = "Productos más caros";
-            this.lblTop5Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panAlertas
-            // 
-            this.panAlertas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panAlertas.BackColor = System.Drawing.Color.White;
-            this.panAlertas.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panAlertas.Controls.Add(this.flpAlertas);
-            this.panAlertas.Controls.Add(this.lblAlertasTitulo);
-            this.panAlertas.Location = new System.Drawing.Point(354, 150);
-            this.panAlertas.Name = "panAlertas";
-            this.panAlertas.Radio = 10;
-            this.panAlertas.Size = new System.Drawing.Size(316, 369);
-            this.panAlertas.TabIndex = 5;
-            // 
-            // flpAlertas
-            // 
-            this.flpAlertas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flpAlertas.AutoScroll = true;
-            this.flpAlertas.BackColor = System.Drawing.Color.White;
-            this.flpAlertas.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpAlertas.Location = new System.Drawing.Point(14, 44);
-            this.flpAlertas.Name = "flpAlertas";
-            this.flpAlertas.Padding = new System.Windows.Forms.Padding(2, 4, 2, 2);
-            this.flpAlertas.Size = new System.Drawing.Size(288, 310);
-            this.flpAlertas.TabIndex = 1;
-            this.flpAlertas.WrapContents = false;
-            // 
-            // lblAlertasTitulo
-            // 
-            this.lblAlertasTitulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblAlertasTitulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblAlertasTitulo.Location = new System.Drawing.Point(16, 12);
-            this.lblAlertasTitulo.Name = "lblAlertasTitulo";
-            this.lblAlertasTitulo.Size = new System.Drawing.Size(284, 26);
-            this.lblAlertasTitulo.TabIndex = 0;
-            this.lblAlertasTitulo.Text = "Alertas de inventario";
-            this.lblAlertasTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panEspecie
-            // 
-            this.panEspecie.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panEspecie.BackColor = System.Drawing.Color.White;
-            this.panEspecie.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panEspecie.Controls.Add(this.grafEspecie);
-            this.panEspecie.Controls.Add(this.lblEspecieTitulo);
-            this.panEspecie.Location = new System.Drawing.Point(22, 150);
-            this.panEspecie.Name = "panEspecie";
-            this.panEspecie.Radio = 10;
-            this.panEspecie.Size = new System.Drawing.Size(316, 369);
-            this.panEspecie.TabIndex = 4;
-            // 
-            // grafEspecie
-            // 
-            this.grafEspecie.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grafEspecie.BackColor = System.Drawing.Color.White;
-            this.grafEspecie.ColorBarra = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.grafEspecie.ColorDestacado = System.Drawing.Color.FromArgb(4, 175, 182);
-            this.grafEspecie.Formato = "N0";
-            this.grafEspecie.Horizontal = false;
-            this.grafEspecie.Location = new System.Drawing.Point(14, 44);
-            this.grafEspecie.Name = "grafEspecie";
-            this.grafEspecie.Size = new System.Drawing.Size(288, 310);
-            this.grafEspecie.TabIndex = 1;
-            this.grafEspecie.TopeEtiquetas = 8;
-            // 
-            // lblEspecieTitulo
-            // 
-            this.lblEspecieTitulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblEspecieTitulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblEspecieTitulo.Location = new System.Drawing.Point(16, 12);
-            this.lblEspecieTitulo.Name = "lblEspecieTitulo";
-            this.lblEspecieTitulo.Size = new System.Drawing.Size(284, 26);
-            this.lblEspecieTitulo.TabIndex = 0;
-            this.lblEspecieTitulo.Text = "Productos por especie";
-            this.lblEspecieTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panKpi4
-            // 
-            this.panKpi4.BackColor = System.Drawing.Color.White;
-            this.panKpi4.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panKpi4.Controls.Add(this.picKpi4);
-            this.panKpi4.Controls.Add(this.lblKpi4Valor);
-            this.panKpi4.Controls.Add(this.lblKpi4Titulo);
-            this.panKpi4.Controls.Add(this.panBarra4);
-            this.panKpi4.Location = new System.Drawing.Point(766, 22);
-            this.panKpi4.Name = "panKpi4";
-            this.panKpi4.Radio = 10;
-            this.panKpi4.Size = new System.Drawing.Size(232, 112);
-            this.panKpi4.TabIndex = 3;
-            // 
-            // picKpi4
-            // 
-            this.picKpi4.BackColor = System.Drawing.Color.FromArgb(224, 244, 251);
-            this.picKpi4.Location = new System.Drawing.Point(170, 24);
-            this.picKpi4.Name = "picKpi4";
-            this.picKpi4.Size = new System.Drawing.Size(46, 46);
-            this.picKpi4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picKpi4.TabIndex = 3;
-            this.picKpi4.TabStop = false;
-            // 
-            // lblKpi4Valor
-            // 
-            this.lblKpi4Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
-            this.lblKpi4Valor.ForeColor = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.lblKpi4Valor.Location = new System.Drawing.Point(14, 56);
-            this.lblKpi4Valor.Name = "lblKpi4Valor";
-            this.lblKpi4Valor.Size = new System.Drawing.Size(150, 46);
-            this.lblKpi4Valor.TabIndex = 2;
-            this.lblKpi4Valor.Text = "0";
-            this.lblKpi4Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lblKpi4Titulo
-            // 
-            this.lblKpi4Titulo.AutoEllipsis = true;
-            this.lblKpi4Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.lblKpi4Titulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblKpi4Titulo.Location = new System.Drawing.Point(14, 16);
-            this.lblKpi4Titulo.Name = "lblKpi4Titulo";
-            this.lblKpi4Titulo.Size = new System.Drawing.Size(154, 36);
-            this.lblKpi4Titulo.TabIndex = 1;
-            this.lblKpi4Titulo.Text = "Bajo inventario:";
-            this.lblKpi4Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panBarra4
-            // 
-            this.panBarra4.BackColor = System.Drawing.Color.FromArgb(8, 145, 178);
-            this.panBarra4.Location = new System.Drawing.Point(1, 1);
-            this.panBarra4.Name = "panBarra4";
-            this.panBarra4.Size = new System.Drawing.Size(230, 6);
-            this.panBarra4.TabIndex = 0;
-            // 
-            // panKpi3
-            // 
-            this.panKpi3.BackColor = System.Drawing.Color.White;
-            this.panKpi3.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panKpi3.Controls.Add(this.picKpi3);
-            this.panKpi3.Controls.Add(this.lblKpi3Valor);
-            this.panKpi3.Controls.Add(this.lblKpi3Titulo);
-            this.panKpi3.Controls.Add(this.panBarra3);
-            this.panKpi3.Location = new System.Drawing.Point(518, 22);
-            this.panKpi3.Name = "panKpi3";
-            this.panKpi3.Radio = 10;
-            this.panKpi3.Size = new System.Drawing.Size(232, 112);
-            this.panKpi3.TabIndex = 2;
-            // 
-            // picKpi3
-            // 
-            this.picKpi3.BackColor = System.Drawing.Color.FromArgb(224, 244, 251);
-            this.picKpi3.Location = new System.Drawing.Point(170, 24);
-            this.picKpi3.Name = "picKpi3";
-            this.picKpi3.Size = new System.Drawing.Size(46, 46);
-            this.picKpi3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picKpi3.TabIndex = 3;
-            this.picKpi3.TabStop = false;
-            // 
-            // lblKpi3Valor
-            // 
-            this.lblKpi3Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
-            this.lblKpi3Valor.ForeColor = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.lblKpi3Valor.Location = new System.Drawing.Point(14, 56);
-            this.lblKpi3Valor.Name = "lblKpi3Valor";
-            this.lblKpi3Valor.Size = new System.Drawing.Size(150, 46);
-            this.lblKpi3Valor.TabIndex = 2;
-            this.lblKpi3Valor.Text = "$0";
-            this.lblKpi3Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lblKpi3Titulo
-            // 
-            this.lblKpi3Titulo.AutoEllipsis = true;
-            this.lblKpi3Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.lblKpi3Titulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblKpi3Titulo.Location = new System.Drawing.Point(14, 16);
-            this.lblKpi3Titulo.Name = "lblKpi3Titulo";
-            this.lblKpi3Titulo.Size = new System.Drawing.Size(154, 36);
-            this.lblKpi3Titulo.TabIndex = 1;
-            this.lblKpi3Titulo.Text = "Valor del inventario:";
-            this.lblKpi3Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panBarra3
-            // 
-            this.panBarra3.BackColor = System.Drawing.Color.FromArgb(8, 145, 178);
-            this.panBarra3.Location = new System.Drawing.Point(1, 1);
-            this.panBarra3.Name = "panBarra3";
-            this.panBarra3.Size = new System.Drawing.Size(230, 6);
-            this.panBarra3.TabIndex = 0;
-            // 
-            // panKpi2
-            // 
-            this.panKpi2.BackColor = System.Drawing.Color.White;
-            this.panKpi2.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panKpi2.Controls.Add(this.picKpi2);
-            this.panKpi2.Controls.Add(this.lblKpi2Valor);
-            this.panKpi2.Controls.Add(this.lblKpi2Titulo);
-            this.panKpi2.Controls.Add(this.panBarra2);
-            this.panKpi2.Location = new System.Drawing.Point(270, 22);
-            this.panKpi2.Name = "panKpi2";
-            this.panKpi2.Radio = 10;
-            this.panKpi2.Size = new System.Drawing.Size(232, 112);
-            this.panKpi2.TabIndex = 1;
-            // 
-            // picKpi2
-            // 
-            this.picKpi2.BackColor = System.Drawing.Color.FromArgb(224, 244, 251);
-            this.picKpi2.Location = new System.Drawing.Point(170, 24);
-            this.picKpi2.Name = "picKpi2";
-            this.picKpi2.Size = new System.Drawing.Size(46, 46);
-            this.picKpi2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picKpi2.TabIndex = 3;
-            this.picKpi2.TabStop = false;
-            // 
-            // lblKpi2Valor
-            // 
-            this.lblKpi2Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
-            this.lblKpi2Valor.ForeColor = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.lblKpi2Valor.Location = new System.Drawing.Point(14, 56);
-            this.lblKpi2Valor.Name = "lblKpi2Valor";
-            this.lblKpi2Valor.Size = new System.Drawing.Size(150, 46);
-            this.lblKpi2Valor.TabIndex = 2;
-            this.lblKpi2Valor.Text = "0";
-            this.lblKpi2Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lblKpi2Titulo
-            // 
-            this.lblKpi2Titulo.AutoEllipsis = true;
-            this.lblKpi2Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.lblKpi2Titulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblKpi2Titulo.Location = new System.Drawing.Point(14, 16);
-            this.lblKpi2Titulo.Name = "lblKpi2Titulo";
-            this.lblKpi2Titulo.Size = new System.Drawing.Size(154, 36);
-            this.lblKpi2Titulo.TabIndex = 1;
-            this.lblKpi2Titulo.Text = "Unidades disponibles:";
-            this.lblKpi2Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panBarra2
-            // 
-            this.panBarra2.BackColor = System.Drawing.Color.FromArgb(8, 145, 178);
-            this.panBarra2.Location = new System.Drawing.Point(1, 1);
-            this.panBarra2.Name = "panBarra2";
-            this.panBarra2.Size = new System.Drawing.Size(230, 6);
-            this.panBarra2.TabIndex = 0;
-            // 
-            // panKpi1
-            // 
-            this.panKpi1.BackColor = System.Drawing.Color.White;
-            this.panKpi1.ColorBorde = System.Drawing.Color.FromArgb(220, 230, 236);
-            this.panKpi1.Controls.Add(this.picKpi1);
-            this.panKpi1.Controls.Add(this.lblKpi1Valor);
-            this.panKpi1.Controls.Add(this.lblKpi1Titulo);
-            this.panKpi1.Controls.Add(this.panBarra1);
-            this.panKpi1.Location = new System.Drawing.Point(22, 22);
-            this.panKpi1.Name = "panKpi1";
-            this.panKpi1.Radio = 10;
-            this.panKpi1.Size = new System.Drawing.Size(232, 112);
-            this.panKpi1.TabIndex = 0;
-            // 
-            // picKpi1
-            // 
-            this.picKpi1.BackColor = System.Drawing.Color.FromArgb(224, 244, 251);
-            this.picKpi1.Location = new System.Drawing.Point(170, 24);
-            this.picKpi1.Name = "picKpi1";
-            this.picKpi1.Size = new System.Drawing.Size(46, 46);
-            this.picKpi1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picKpi1.TabIndex = 3;
-            this.picKpi1.TabStop = false;
-            // 
-            // lblKpi1Valor
-            // 
-            this.lblKpi1Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
-            this.lblKpi1Valor.ForeColor = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.lblKpi1Valor.Location = new System.Drawing.Point(14, 56);
-            this.lblKpi1Valor.Name = "lblKpi1Valor";
-            this.lblKpi1Valor.Size = new System.Drawing.Size(150, 46);
-            this.lblKpi1Valor.TabIndex = 2;
-            this.lblKpi1Valor.Text = "0";
-            this.lblKpi1Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lblKpi1Titulo
-            // 
-            this.lblKpi1Titulo.AutoEllipsis = true;
-            this.lblKpi1Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.lblKpi1Titulo.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblKpi1Titulo.Location = new System.Drawing.Point(14, 16);
-            this.lblKpi1Titulo.Name = "lblKpi1Titulo";
-            this.lblKpi1Titulo.Size = new System.Drawing.Size(154, 36);
-            this.lblKpi1Titulo.TabIndex = 1;
-            this.lblKpi1Titulo.Text = "Productos registrados:";
-            this.lblKpi1Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // panBarra1
-            // 
-            this.panBarra1.BackColor = System.Drawing.Color.FromArgb(8, 145, 178);
-            this.panBarra1.Location = new System.Drawing.Point(1, 1);
-            this.panBarra1.Name = "panBarra1";
-            this.panBarra1.Size = new System.Drawing.Size(230, 6);
-            this.panBarra1.TabIndex = 0;
-            // 
             // panInventario
             // 
             this.panInventario.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panInventario.BackColor = System.Drawing.Color.FromArgb(245, 248, 250);
+            this.panInventario.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
             this.panInventario.Controls.Add(this.dgvProductos);
             this.panInventario.Controls.Add(this.lblAviso);
             this.panInventario.Controls.Add(this.btnActualizar);
@@ -743,20 +363,25 @@
             // 
             this.dgvProductos.AllowUserToAddRows = false;
             this.dgvProductos.AllowUserToDeleteRows = false;
-            this.dgvProductos.AllowUserToOrderColumns = false;
             this.dgvProductos.AllowUserToResizeColumns = false;
             this.dgvProductos.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(244)))), ((int)(((byte)(247)))));
+            this.dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvProductos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvProductos.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(240, 244, 247);
             this.dgvProductos.BackgroundColor = System.Drawing.Color.White;
             this.dgvProductos.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvProductos.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgvProductos.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgvProductos.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(25, 46, 81);
-            this.dgvProductos.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.dgvProductos.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(46)))), ((int)(((byte)(81)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvProductos.ColumnHeadersHeight = 48;
             this.dgvProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvProductos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -769,13 +394,16 @@
             this.colEstado,
             this.colEditar,
             this.colEliminar});
-            this.dgvProductos.DefaultCellStyle.BackColor = System.Drawing.Color.White;
-            this.dgvProductos.DefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.dgvProductos.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.dgvProductos.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(217, 238, 243);
-            this.dgvProductos.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(3, 50, 90);
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(238)))), ((int)(((byte)(243)))));
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvProductos.DefaultCellStyle = dataGridViewCellStyle6;
             this.dgvProductos.EnableHeadersVisualStyles = false;
-            this.dgvProductos.GridColor = System.Drawing.Color.FromArgb(233, 239, 244);
+            this.dgvProductos.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(233)))), ((int)(((byte)(239)))), ((int)(((byte)(244)))));
             this.dgvProductos.Location = new System.Drawing.Point(22, 142);
             this.dgvProductos.MultiSelect = false;
             this.dgvProductos.Name = "dgvProductos";
@@ -786,10 +414,10 @@
             this.dgvProductos.Size = new System.Drawing.Size(976, 377);
             this.dgvProductos.TabIndex = 5;
             this.dgvProductos.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellClick);
+            this.dgvProductos.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvProductos_CellFormatting);
+            this.dgvProductos.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellLeave);
             this.dgvProductos.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvProductos_CellMouseMove);
             this.dgvProductos.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvProductos_CellPainting);
-            this.dgvProductos.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvProductos_CellLeave);
-            this.dgvProductos.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvProductos_CellFormatting);
             // 
             // colId
             // 
@@ -814,7 +442,8 @@
             // 
             // colCantidad
             // 
-            this.colCantidad.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.colCantidad.DefaultCellStyle = dataGridViewCellStyle3;
             this.colCantidad.HeaderText = "Cantidad";
             this.colCantidad.Name = "colCantidad";
             this.colCantidad.ReadOnly = true;
@@ -822,11 +451,11 @@
             // 
             // colPrecio
             // 
-            this.colPrecio.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.colPrecio.DefaultCellStyle = dataGridViewCellStyle4;
             this.colPrecio.HeaderText = "Precio";
             this.colPrecio.Name = "colPrecio";
             this.colPrecio.ReadOnly = true;
-            this.colPrecio.Width = 100;
             // 
             // colVer
             // 
@@ -838,7 +467,8 @@
             // 
             // colEstado
             // 
-            this.colEstado.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.colEstado.DefaultCellStyle = dataGridViewCellStyle5;
             this.colEstado.HeaderText = "Estado";
             this.colEstado.Name = "colEstado";
             this.colEstado.ReadOnly = true;
@@ -863,7 +493,7 @@
             // lblAviso
             // 
             this.lblAviso.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            this.lblAviso.ForeColor = System.Drawing.Color.FromArgb(95, 115, 135);
+            this.lblAviso.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(115)))), ((int)(((byte)(135)))));
             this.lblAviso.Location = new System.Drawing.Point(250, 78);
             this.lblAviso.Name = "lblAviso";
             this.lblAviso.Size = new System.Drawing.Size(520, 48);
@@ -873,11 +503,11 @@
             // btnActualizar
             // 
             this.btnActualizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnActualizar.BackColor = System.Drawing.Color.FromArgb(2, 43, 79);
+            this.btnActualizar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(2)))), ((int)(((byte)(43)))), ((int)(((byte)(79)))));
             this.btnActualizar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnActualizar.FlatAppearance.BorderSize = 0;
-            this.btnActualizar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(1, 32, 59);
-            this.btnActualizar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(4, 62, 111);
+            this.btnActualizar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(32)))), ((int)(((byte)(59)))));
+            this.btnActualizar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(62)))), ((int)(((byte)(111)))));
             this.btnActualizar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnActualizar.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
             this.btnActualizar.ForeColor = System.Drawing.Color.White;
@@ -894,11 +524,11 @@
             // 
             // btnAgregar
             // 
-            this.btnAgregar.BackColor = System.Drawing.Color.FromArgb(4, 175, 182);
+            this.btnAgregar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(175)))), ((int)(((byte)(182)))));
             this.btnAgregar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAgregar.FlatAppearance.BorderSize = 0;
-            this.btnAgregar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(3, 143, 149);
-            this.btnAgregar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(6, 199, 207);
+            this.btnAgregar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(143)))), ((int)(((byte)(149)))));
+            this.btnAgregar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(199)))), ((int)(((byte)(207)))));
             this.btnAgregar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAgregar.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
             this.btnAgregar.ForeColor = System.Drawing.Color.White;
@@ -913,15 +543,372 @@
             this.btnAgregar.UseVisualStyleBackColor = false;
             this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
             // 
+            // panValor
+            // 
+            this.panValor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panValor.BackColor = System.Drawing.Color.White;
+            this.panValor.Controls.Add(this.grafValor);
+            this.panValor.Controls.Add(this.lblValorTitulo);
+            this.panValor.Location = new System.Drawing.Point(686, 342);
+            this.panValor.Name = "panValor";
+            this.panValor.Size = new System.Drawing.Size(312, 177);
+            this.panValor.TabIndex = 7;
+            // 
+            // grafValor
+            // 
+            this.grafValor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grafValor.BackColor = System.Drawing.Color.White;
+            this.grafValor.Font = new System.Drawing.Font("Segoe UI", 8.5F);
+            this.grafValor.Location = new System.Drawing.Point(14, 38);
+            this.grafValor.Name = "grafValor";
+            this.grafValor.Size = new System.Drawing.Size(284, 127);
+            this.grafValor.TabIndex = 1;
+            // 
+            // lblValorTitulo
+            // 
+            this.lblValorTitulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblValorTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblValorTitulo.Location = new System.Drawing.Point(16, 10);
+            this.lblValorTitulo.Name = "lblValorTitulo";
+            this.lblValorTitulo.Size = new System.Drawing.Size(280, 24);
+            this.lblValorTitulo.TabIndex = 0;
+            this.lblValorTitulo.Text = "Valor por especie";
+            this.lblValorTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panTop5
+            // 
+            this.panTop5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panTop5.BackColor = System.Drawing.Color.White;
+            this.panTop5.Controls.Add(this.grafTop5);
+            this.panTop5.Controls.Add(this.lblTop5Titulo);
+            this.panTop5.Location = new System.Drawing.Point(686, 150);
+            this.panTop5.Name = "panTop5";
+            this.panTop5.Size = new System.Drawing.Size(312, 176);
+            this.panTop5.TabIndex = 6;
+            // 
+            // grafTop5
+            // 
+            this.grafTop5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grafTop5.BackColor = System.Drawing.Color.White;
+            this.grafTop5.Font = new System.Drawing.Font("Segoe UI", 8.5F);
+            this.grafTop5.Location = new System.Drawing.Point(14, 38);
+            this.grafTop5.Name = "grafTop5";
+            this.grafTop5.Size = new System.Drawing.Size(284, 126);
+            this.grafTop5.TabIndex = 1;
+            // 
+            // lblTop5Titulo
+            // 
+            this.lblTop5Titulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTop5Titulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblTop5Titulo.Location = new System.Drawing.Point(16, 10);
+            this.lblTop5Titulo.Name = "lblTop5Titulo";
+            this.lblTop5Titulo.Size = new System.Drawing.Size(280, 24);
+            this.lblTop5Titulo.TabIndex = 0;
+            this.lblTop5Titulo.Text = "Productos más caros";
+            this.lblTop5Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panAlertas
+            // 
+            this.panAlertas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panAlertas.BackColor = System.Drawing.Color.White;
+            this.panAlertas.Controls.Add(this.flpAlertas);
+            this.panAlertas.Controls.Add(this.lblAlertasTitulo);
+            this.panAlertas.Location = new System.Drawing.Point(354, 150);
+            this.panAlertas.Name = "panAlertas";
+            this.panAlertas.Size = new System.Drawing.Size(316, 369);
+            this.panAlertas.TabIndex = 5;
+            // 
+            // flpAlertas
+            // 
+            this.flpAlertas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flpAlertas.AutoScroll = true;
+            this.flpAlertas.BackColor = System.Drawing.Color.White;
+            this.flpAlertas.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flpAlertas.Location = new System.Drawing.Point(12, 44);
+            this.flpAlertas.Name = "flpAlertas";
+            this.flpAlertas.Padding = new System.Windows.Forms.Padding(2, 4, 2, 2);
+            this.flpAlertas.Size = new System.Drawing.Size(288, 310);
+            this.flpAlertas.TabIndex = 1;
+            this.flpAlertas.WrapContents = false;
+            // 
+            // lblAlertasTitulo
+            // 
+            this.lblAlertasTitulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblAlertasTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblAlertasTitulo.Location = new System.Drawing.Point(16, 12);
+            this.lblAlertasTitulo.Name = "lblAlertasTitulo";
+            this.lblAlertasTitulo.Size = new System.Drawing.Size(284, 26);
+            this.lblAlertasTitulo.TabIndex = 0;
+            this.lblAlertasTitulo.Text = "Alertas de inventario";
+            this.lblAlertasTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panEspecie
+            // 
+            this.panEspecie.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panEspecie.BackColor = System.Drawing.Color.White;
+            this.panEspecie.Controls.Add(this.grafEspecie);
+            this.panEspecie.Controls.Add(this.lblEspecieTitulo);
+            this.panEspecie.Location = new System.Drawing.Point(22, 150);
+            this.panEspecie.Name = "panEspecie";
+            this.panEspecie.Size = new System.Drawing.Size(316, 369);
+            this.panEspecie.TabIndex = 4;
+            // 
+            // grafEspecie
+            // 
+            this.grafEspecie.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grafEspecie.BackColor = System.Drawing.Color.White;
+            this.grafEspecie.Font = new System.Drawing.Font("Segoe UI", 8.5F);
+            this.grafEspecie.Location = new System.Drawing.Point(14, 44);
+            this.grafEspecie.Name = "grafEspecie";
+            this.grafEspecie.Size = new System.Drawing.Size(288, 310);
+            this.grafEspecie.TabIndex = 1;
+            // 
+            // lblEspecieTitulo
+            // 
+            this.lblEspecieTitulo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblEspecieTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblEspecieTitulo.Location = new System.Drawing.Point(16, 12);
+            this.lblEspecieTitulo.Name = "lblEspecieTitulo";
+            this.lblEspecieTitulo.Size = new System.Drawing.Size(284, 26);
+            this.lblEspecieTitulo.TabIndex = 0;
+            this.lblEspecieTitulo.Text = "Productos por especie";
+            this.lblEspecieTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panKpi4
+            // 
+            this.panKpi4.BackColor = System.Drawing.Color.White;
+            this.panKpi4.Controls.Add(this.picKpi4);
+            this.panKpi4.Controls.Add(this.lblKpi4Valor);
+            this.panKpi4.Controls.Add(this.lblKpi4Titulo);
+            this.panKpi4.Controls.Add(this.panBarra4);
+            this.panKpi4.Location = new System.Drawing.Point(766, 22);
+            this.panKpi4.Name = "panKpi4";
+            this.panKpi4.Size = new System.Drawing.Size(232, 112);
+            this.panKpi4.TabIndex = 3;
+            // 
+            // picKpi4
+            // 
+            this.picKpi4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(244)))), ((int)(((byte)(251)))));
+            this.picKpi4.Location = new System.Drawing.Point(170, 24);
+            this.picKpi4.Name = "picKpi4";
+            this.picKpi4.Size = new System.Drawing.Size(46, 46);
+            this.picKpi4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.picKpi4.TabIndex = 3;
+            this.picKpi4.TabStop = false;
+            // 
+            // lblKpi4Valor
+            // 
+            this.lblKpi4Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
+            this.lblKpi4Valor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
+            this.lblKpi4Valor.Location = new System.Drawing.Point(14, 56);
+            this.lblKpi4Valor.Name = "lblKpi4Valor";
+            this.lblKpi4Valor.Size = new System.Drawing.Size(150, 46);
+            this.lblKpi4Valor.TabIndex = 2;
+            this.lblKpi4Valor.Text = "0";
+            this.lblKpi4Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblKpi4Titulo
+            // 
+            this.lblKpi4Titulo.AutoEllipsis = true;
+            this.lblKpi4Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.lblKpi4Titulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblKpi4Titulo.Location = new System.Drawing.Point(14, 16);
+            this.lblKpi4Titulo.Name = "lblKpi4Titulo";
+            this.lblKpi4Titulo.Size = new System.Drawing.Size(154, 36);
+            this.lblKpi4Titulo.TabIndex = 1;
+            this.lblKpi4Titulo.Text = "Bajo inventario:";
+            this.lblKpi4Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panBarra4
+            // 
+            this.panBarra4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(145)))), ((int)(((byte)(178)))));
+            this.panBarra4.Location = new System.Drawing.Point(1, 1);
+            this.panBarra4.Name = "panBarra4";
+            this.panBarra4.Size = new System.Drawing.Size(230, 6);
+            this.panBarra4.TabIndex = 0;
+            // 
+            // panKpi3
+            // 
+            this.panKpi3.BackColor = System.Drawing.Color.White;
+            this.panKpi3.Controls.Add(this.picKpi3);
+            this.panKpi3.Controls.Add(this.lblKpi3Valor);
+            this.panKpi3.Controls.Add(this.lblKpi3Titulo);
+            this.panKpi3.Controls.Add(this.panBarra3);
+            this.panKpi3.Location = new System.Drawing.Point(518, 22);
+            this.panKpi3.Name = "panKpi3";
+            this.panKpi3.Size = new System.Drawing.Size(232, 112);
+            this.panKpi3.TabIndex = 2;
+            // 
+            // picKpi3
+            // 
+            this.picKpi3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(244)))), ((int)(((byte)(251)))));
+            this.picKpi3.Location = new System.Drawing.Point(170, 24);
+            this.picKpi3.Name = "picKpi3";
+            this.picKpi3.Size = new System.Drawing.Size(46, 46);
+            this.picKpi3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picKpi3.TabIndex = 3;
+            this.picKpi3.TabStop = false;
+            // 
+            // lblKpi3Valor
+            // 
+            this.lblKpi3Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
+            this.lblKpi3Valor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
+            this.lblKpi3Valor.Location = new System.Drawing.Point(14, 56);
+            this.lblKpi3Valor.Name = "lblKpi3Valor";
+            this.lblKpi3Valor.Size = new System.Drawing.Size(150, 46);
+            this.lblKpi3Valor.TabIndex = 2;
+            this.lblKpi3Valor.Text = "$0";
+            this.lblKpi3Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblKpi3Titulo
+            // 
+            this.lblKpi3Titulo.AutoEllipsis = true;
+            this.lblKpi3Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.lblKpi3Titulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblKpi3Titulo.Location = new System.Drawing.Point(14, 16);
+            this.lblKpi3Titulo.Name = "lblKpi3Titulo";
+            this.lblKpi3Titulo.Size = new System.Drawing.Size(154, 36);
+            this.lblKpi3Titulo.TabIndex = 1;
+            this.lblKpi3Titulo.Text = "Valor del inventario:";
+            this.lblKpi3Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panBarra3
+            // 
+            this.panBarra3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(145)))), ((int)(((byte)(178)))));
+            this.panBarra3.Location = new System.Drawing.Point(1, 1);
+            this.panBarra3.Name = "panBarra3";
+            this.panBarra3.Size = new System.Drawing.Size(230, 6);
+            this.panBarra3.TabIndex = 0;
+            // 
+            // panKpi2
+            // 
+            this.panKpi2.BackColor = System.Drawing.Color.White;
+            this.panKpi2.Controls.Add(this.picKpi2);
+            this.panKpi2.Controls.Add(this.lblKpi2Valor);
+            this.panKpi2.Controls.Add(this.lblKpi2Titulo);
+            this.panKpi2.Controls.Add(this.panBarra2);
+            this.panKpi2.Location = new System.Drawing.Point(270, 22);
+            this.panKpi2.Name = "panKpi2";
+            this.panKpi2.Size = new System.Drawing.Size(232, 112);
+            this.panKpi2.TabIndex = 1;
+            // 
+            // picKpi2
+            // 
+            this.picKpi2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(244)))), ((int)(((byte)(251)))));
+            this.picKpi2.Location = new System.Drawing.Point(170, 24);
+            this.picKpi2.Name = "picKpi2";
+            this.picKpi2.Size = new System.Drawing.Size(46, 46);
+            this.picKpi2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picKpi2.TabIndex = 3;
+            this.picKpi2.TabStop = false;
+            // 
+            // lblKpi2Valor
+            // 
+            this.lblKpi2Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
+            this.lblKpi2Valor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
+            this.lblKpi2Valor.Location = new System.Drawing.Point(14, 56);
+            this.lblKpi2Valor.Name = "lblKpi2Valor";
+            this.lblKpi2Valor.Size = new System.Drawing.Size(150, 46);
+            this.lblKpi2Valor.TabIndex = 2;
+            this.lblKpi2Valor.Text = "0";
+            this.lblKpi2Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblKpi2Titulo
+            // 
+            this.lblKpi2Titulo.AutoEllipsis = true;
+            this.lblKpi2Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.lblKpi2Titulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblKpi2Titulo.Location = new System.Drawing.Point(14, 16);
+            this.lblKpi2Titulo.Name = "lblKpi2Titulo";
+            this.lblKpi2Titulo.Size = new System.Drawing.Size(154, 36);
+            this.lblKpi2Titulo.TabIndex = 1;
+            this.lblKpi2Titulo.Text = "Unidades disponibles:";
+            this.lblKpi2Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panBarra2
+            // 
+            this.panBarra2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(145)))), ((int)(((byte)(178)))));
+            this.panBarra2.Location = new System.Drawing.Point(1, 1);
+            this.panBarra2.Name = "panBarra2";
+            this.panBarra2.Size = new System.Drawing.Size(230, 6);
+            this.panBarra2.TabIndex = 0;
+            // 
+            // panKpi1
+            // 
+            this.panKpi1.BackColor = System.Drawing.Color.White;
+            this.panKpi1.Controls.Add(this.picKpi1);
+            this.panKpi1.Controls.Add(this.lblKpi1Valor);
+            this.panKpi1.Controls.Add(this.lblKpi1Titulo);
+            this.panKpi1.Controls.Add(this.panBarra1);
+            this.panKpi1.Location = new System.Drawing.Point(22, 22);
+            this.panKpi1.Name = "panKpi1";
+            this.panKpi1.Size = new System.Drawing.Size(232, 112);
+            this.panKpi1.TabIndex = 0;
+            // 
+            // picKpi1
+            // 
+            this.picKpi1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(244)))), ((int)(((byte)(251)))));
+            this.picKpi1.Location = new System.Drawing.Point(170, 24);
+            this.picKpi1.Name = "picKpi1";
+            this.picKpi1.Size = new System.Drawing.Size(46, 46);
+            this.picKpi1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picKpi1.TabIndex = 3;
+            this.picKpi1.TabStop = false;
+            // 
+            // lblKpi1Valor
+            // 
+            this.lblKpi1Valor.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
+            this.lblKpi1Valor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
+            this.lblKpi1Valor.Location = new System.Drawing.Point(14, 56);
+            this.lblKpi1Valor.Name = "lblKpi1Valor";
+            this.lblKpi1Valor.Size = new System.Drawing.Size(150, 46);
+            this.lblKpi1Valor.TabIndex = 2;
+            this.lblKpi1Valor.Text = "0";
+            this.lblKpi1Valor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblKpi1Titulo
+            // 
+            this.lblKpi1Titulo.AutoEllipsis = true;
+            this.lblKpi1Titulo.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.lblKpi1Titulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblKpi1Titulo.Location = new System.Drawing.Point(14, 16);
+            this.lblKpi1Titulo.Name = "lblKpi1Titulo";
+            this.lblKpi1Titulo.Size = new System.Drawing.Size(154, 36);
+            this.lblKpi1Titulo.TabIndex = 1;
+            this.lblKpi1Titulo.Text = "Productos registrados:";
+            this.lblKpi1Titulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panBarra1
+            // 
+            this.panBarra1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(145)))), ((int)(((byte)(178)))));
+            this.panBarra1.Location = new System.Drawing.Point(1, 1);
+            this.panBarra1.Name = "panBarra1";
+            this.panBarra1.Size = new System.Drawing.Size(230, 6);
+            this.panBarra1.TabIndex = 0;
+            // 
             // panFiltro
             // 
             this.panFiltro.BackColor = System.Drawing.Color.White;
-            this.panFiltro.ColorBorde = System.Drawing.Color.White;
             this.panFiltro.Controls.Add(this.cboFiltro);
             this.panFiltro.Controls.Add(this.picFiltro);
             this.panFiltro.Location = new System.Drawing.Point(468, 20);
             this.panFiltro.Name = "panFiltro";
-            this.panFiltro.Radio = 14;
             this.panFiltro.Size = new System.Drawing.Size(300, 44);
             this.panFiltro.TabIndex = 1;
             // 
@@ -933,16 +920,16 @@
             this.cboFiltro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboFiltro.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cboFiltro.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            this.cboFiltro.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
+            this.cboFiltro.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
             this.cboFiltro.FormattingEnabled = true;
             this.cboFiltro.Items.AddRange(new object[] {
             "Todas las especies",
             "Tropical",
             "Agresivo",
-            "Fr\u00EDo"});
+            "Frío"});
             this.cboFiltro.Location = new System.Drawing.Point(44, 7);
             this.cboFiltro.Name = "cboFiltro";
-            this.cboFiltro.Size = new System.Drawing.Size(246, 28);
+            this.cboFiltro.Size = new System.Drawing.Size(246, 27);
             this.cboFiltro.TabIndex = 1;
             this.cboFiltro.SelectedIndexChanged += new System.EventHandler(this.cboFiltro_SelectedIndexChanged);
             // 
@@ -959,12 +946,10 @@
             // panBuscador
             // 
             this.panBuscador.BackColor = System.Drawing.Color.White;
-            this.panBuscador.ColorBorde = System.Drawing.Color.White;
             this.panBuscador.Controls.Add(this.txtBuscar);
             this.panBuscador.Controls.Add(this.picLupa);
             this.panBuscador.Location = new System.Drawing.Point(22, 20);
             this.panBuscador.Name = "panBuscador";
-            this.panBuscador.Radio = 14;
             this.panBuscador.Size = new System.Drawing.Size(430, 44);
             this.panBuscador.TabIndex = 0;
             // 
@@ -975,10 +960,10 @@
             this.txtBuscar.BackColor = System.Drawing.Color.White;
             this.txtBuscar.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtBuscar.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
+            this.txtBuscar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
             this.txtBuscar.Location = new System.Drawing.Point(44, 10);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(374, 24);
+            this.txtBuscar.Size = new System.Drawing.Size(374, 20);
             this.txtBuscar.TabIndex = 1;
             this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
             this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
@@ -996,9 +981,8 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.FromArgb(245, 248, 250);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
             this.ClientSize = new System.Drawing.Size(1280, 649);
             this.Controls.Add(this.panContenido);
             this.Controls.Add(this.panTopBar);
@@ -1015,6 +999,8 @@
             this.panUsuario.ResumeLayout(false);
             this.panContenido.ResumeLayout(false);
             this.panDashboard.ResumeLayout(false);
+            this.panInventario.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).EndInit();
             this.panValor.ResumeLayout(false);
             this.panTop5.ResumeLayout(false);
             this.panAlertas.ResumeLayout(false);
@@ -1027,17 +1013,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.picKpi2)).EndInit();
             this.panKpi1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picKpi1)).EndInit();
-            this.panInventario.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).EndInit();
             this.panFiltro.ResumeLayout(false);
-            this.panFiltro.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFiltro)).EndInit();
             this.panBuscador.ResumeLayout(false);
             this.panBuscador.PerformLayout();
-            this.panUsuario.PerformLayout();
-            this.panTopBar.PerformLayout();
-            this.panLateral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLupa)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
