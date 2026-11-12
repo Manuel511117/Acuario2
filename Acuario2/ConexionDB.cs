@@ -18,6 +18,20 @@ namespace Acuario2
         public string Imagen; // ruta relativa junto al exe (vacío si no tiene)
     }
 
+    /// <summary>Fila del historial de ventas.</summary>
+    public class Venta
+    {
+        public int Id;
+        public int ProductoId;
+        public string Producto;
+        public string Categoria;
+        public int Cantidad;
+        public decimal Precio;
+        public decimal Total;
+        public DateTime Fecha;
+        public string Usuario;
+    }
+
     /// <summary>Par clave/valor para las gráficas del dashboard.</summary>
     public class DatoGrafica
     {
@@ -48,6 +62,38 @@ namespace Acuario2
             new Producto { Id = 7, Nombre = "Escalar Mármol", Especie = "Pterophyllum scalare", Cantidad = 12, Precio = 14.00m, Imagen = "" },
             new Producto { Id = 8, Nombre = "Corydora Panda", Especie = "Corydoras panda", Cantidad = 20, Precio = 5.50m, Imagen = "" }
         };
+
+        private static readonly List<Venta> _mockVentas = new List<Venta>();
+        private static int _mockVentaId = 0;
+
+        /// <summary>Categorías disponibles en el punto de venta.</summary>
+        public static readonly string[] CategoriasVenta =
+        {
+            "Arena",
+            "Comida para pez",
+            "Pecera",
+            "Algas",
+            "Peces",
+            "Decoraciones",
+            "Filtros",
+            "Especies exóticas"
+        };
+
+        /// <summary>Sugiere una categoría de venta a partir del nombre/especie del producto.</summary>
+        public static string CategoriaSugerida(Producto p)
+        {
+            if (p == null) return "Peces";
+            string texto = ((p.Nombre ?? "") + " " + (p.Especie ?? "")).ToLowerInvariant();
+
+            if (texto.Contains("arena")) return "Arena";
+            if (texto.Contains("comida") || texto.Contains("alimento")) return "Comida para pez";
+            if (texto.Contains("pecera") || texto.Contains("acuario")) return "Pecera";
+            if (texto.Contains("alga")) return "Algas";
+            if (texto.Contains("filtro")) return "Filtros";
+            if (texto.Contains("decor") || texto.Contains("adorno") || texto.Contains("planta")) return "Decoraciones";
+            if (texto.Contains("exotic") || texto.Contains("exótic")) return "Especies exóticas";
+            return "Peces";
+        }
 
         private static string Cadena
         {
@@ -105,6 +151,18 @@ namespace Acuario2
                         cantidad INT NOT NULL DEFAULT 0,
                         precio DECIMAL(10,2) NOT NULL DEFAULT 0.00,
                         imagen VARCHAR(255) NULL
+                    );
+                    CREATE TABLE IF NOT EXISTS ventas (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        producto_id INT NULL,
+                        producto VARCHAR(100) NOT NULL,
+                        categoria VARCHAR(50) NOT NULL,
+                        cantidad INT NOT NULL,
+                        precio DECIMAL(10,2) NOT NULL,
+                        total DECIMAL(12,2) NOT NULL,
+                        fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        usuario VARCHAR(50) NULL,
+                        INDEX idx_ventas_fecha (fecha)
                     );";
 
                 using (MySqlCommand cmd = new MySqlCommand(ddl, conn))
@@ -431,6 +489,257 @@ namespace Acuario2
             {
                 System.Diagnostics.Debug.WriteLine("EliminarProducto: " + ex);
                 mensaje = "No se pudo eliminar el producto.";
+                return false;
+            }
+        }
+
+        // ============================================================
+        //  Ventas (punto de venta)
+        // ============================================================
+
+        private static Venta LeerVenta(MySqlDataReader r)
+        {
+            Venta v = new Venta();
+            v.Id = r.GetInt32(r.GetOrdinal("id"));
+            v.ProductoId = r.IsDBNull(r.GetOrdinal("producto_id")) ? 0 : r.GetInt32(r.GetOrdinal("producto_id"));
+            v.Producto = r.GetString(r.GetOrdinal("producto"));
+            v.Categoria = r.GetString(r.GetOrdinal("categoria"));
+            v.Cantidad = r.GetInt32(r.GetOrdinal("cantidad"));
+            v.Precio = r.GetDecimal(r.GetOrdinal("precio"));
+            v.Total = r.GetDecimal(r.GetOrdinal("total"));
+            v.Fecha = r.GetDateTime(r.GetOrdinal("fecha"));
+            v.Usuario = r.IsDBNull(r.GetOrdinal("usuario")) ? string.Empty : r.GetString(r.GetOrdinal("usuario"));
+            return v;
+        }
+
+        private static Venta CopiarVenta(Venta v)
+        {
+            return new Venta
+            {
+                Id = v.Id,
+                ProductoId = v.ProductoId,
+                Producto = v.Producto,
+                Categoria = v.Categoria,
+                Cantidad = v.Cantidad,
+                Precio = v.Precio,
+                Total = v.Total,
+                Fecha = v.Fecha,
+                Usuario = v.Usuario
+            };
+        }
+
+        /// <summary>Lista el historial de ventas, de la más reciente a la más antigua.</summary>
+        public static List<Venta> ListarVentas(out string mensaje)
+        {
+            mensaje = string.Empty;
+
+            if (ModoOffline || !EstaConfiguradaCadena())
+            {
+                return _mockVentas.OrderByDescending(x => x.Id).Select(CopiarVenta).ToList();
+            }
+
+            List<Venta> lista = new List<Venta>();
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlCommand cmd = new MySqlCommand(
+                    "SELECT id, producto_id, producto, categoria, cantidad, precio, total, fecha, usuario " +
+                    "FROM ventas ORDER BY id DESC", conn))
+                using (MySqlDataReader r = cmd.ExecuteReader())
+                {
+                    while (r.Read()) lista.Add(LeerVenta(r));
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("ListarVentas: " + ex);
+                mensaje = "No se pudo cargar el historial de ventas desde la BD.";
+            }
+            return lista;
+        }
+
+        /// <summary>
+        /// Registra una venta y descuenta la cantidad vendida del inventario en una sola transacción.
+        /// </summary>
+        public static bool RegistrarVenta(Venta v, out string mensaje)
+        {
+            mensaje = string.Empty;
+
+            if (v == null) { mensaje = "No hay datos de la venta."; return false; }
+            if (v.ProductoId <= 0) { mensaje = "Seleccione un producto."; return false; }
+            if (v.Cantidad <= 0) { mensaje = "La cantidad debe ser mayor que cero."; return false; }
+            if (v.Precio < 0) { mensaje = "El precio no puede ser negativo."; return false; }
+            if (string.IsNullOrWhiteSpace(v.Categoria)) { mensaje = "Seleccione una categoría."; return false; }
+
+            v.Total = Math.Round(v.Cantidad * v.Precio, 2);
+            v.Fecha = DateTime.Now;
+
+            if (ModoOffline || !EstaConfiguradaCadena())
+            {
+                Producto prod = _mockProductos.FirstOrDefault(x => x.Id == v.ProductoId);
+                if (prod == null) { mensaje = "El producto ya no existe en el inventario."; return false; }
+                if (prod.Cantidad < v.Cantidad)
+                {
+                    mensaje = "Stock insuficiente: solo quedan " + prod.Cantidad + " unidades de «" + prod.Nombre + "».";
+                    return false;
+                }
+
+                v.Id = ++_mockVentaId;
+                v.Producto = prod.Nombre;
+                _mockVentas.Add(v);
+                prod.Cantidad -= v.Cantidad;
+                return true;
+            }
+
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        int stock;
+                        string nombre;
+                        using (MySqlCommand sel = new MySqlCommand(
+                            "SELECT nombre, cantidad FROM productos WHERE id = @id FOR UPDATE", conn, tx))
+                        {
+                            sel.Parameters.AddWithValue("@id", v.ProductoId);
+                            using (MySqlDataReader r = sel.ExecuteReader())
+                            {
+                                if (!r.Read())
+                                {
+                                    tx.Rollback();
+                                    mensaje = "El producto ya no existe en el inventario.";
+                                    return false;
+                                }
+                                nombre = r.GetString(0);
+                                stock = r.GetInt32(1);
+                            }
+                        }
+
+                        if (stock < v.Cantidad)
+                        {
+                            tx.Rollback();
+                            mensaje = "Stock insuficiente: solo quedan " + stock + " unidades de «" + nombre + "».";
+                            return false;
+                        }
+
+                        v.Producto = nombre;
+                        using (MySqlCommand ins = new MySqlCommand(
+                            "INSERT INTO ventas (producto_id, producto, categoria, cantidad, precio, total, fecha, usuario) " +
+                            "VALUES (@producto_id, @producto, @categoria, @cantidad, @precio, @total, @fecha, @usuario)", conn, tx))
+                        {
+                            ins.Parameters.AddWithValue("@producto_id", v.ProductoId);
+                            ins.Parameters.AddWithValue("@producto", v.Producto);
+                            ins.Parameters.AddWithValue("@categoria", v.Categoria);
+                            ins.Parameters.AddWithValue("@cantidad", v.Cantidad);
+                            ins.Parameters.AddWithValue("@precio", v.Precio);
+                            ins.Parameters.AddWithValue("@total", v.Total);
+                            ins.Parameters.AddWithValue("@fecha", v.Fecha);
+                            ins.Parameters.AddWithValue("@usuario", string.IsNullOrEmpty(v.Usuario) ? (object)DBNull.Value : v.Usuario);
+                            ins.ExecuteNonQuery();
+                            v.Id = (int)ins.LastInsertedId;
+                        }
+
+                        using (MySqlCommand upd = new MySqlCommand(
+                            "UPDATE productos SET cantidad = cantidad - @cantidad WHERE id = @id", conn, tx))
+                        {
+                            upd.Parameters.AddWithValue("@cantidad", v.Cantidad);
+                            upd.Parameters.AddWithValue("@id", v.ProductoId);
+                            upd.ExecuteNonQuery();
+                        }
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        try { tx.Rollback(); } catch { }
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("RegistrarVenta: " + ex);
+                mensaje = "No se pudo registrar la venta en la BD.";
+                return false;
+            }
+        }
+
+        /// <summary>Anula una venta y repone la cantidad vendida al inventario.</summary>
+        public static bool AnularVenta(int id, out string mensaje)
+        {
+            mensaje = string.Empty;
+
+            if (ModoOffline || !EstaConfiguradaCadena())
+            {
+                Venta v = _mockVentas.FirstOrDefault(x => x.Id == id);
+                if (v == null) { mensaje = "La venta ya no existe."; return false; }
+
+                _mockVentas.Remove(v);
+                Producto prod = _mockProductos.FirstOrDefault(x => x.Id == v.ProductoId);
+                if (prod != null) prod.Cantidad += v.Cantidad;
+                return true;
+            }
+
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        int productoId;
+                        int cantidad;
+                        using (MySqlCommand sel = new MySqlCommand(
+                            "SELECT producto_id, cantidad FROM ventas WHERE id = @id FOR UPDATE", conn, tx))
+                        {
+                            sel.Parameters.AddWithValue("@id", id);
+                            using (MySqlDataReader r = sel.ExecuteReader())
+                            {
+                                if (!r.Read())
+                                {
+                                    tx.Rollback();
+                                    mensaje = "La venta ya no existe.";
+                                    return false;
+                                }
+                                productoId = r.IsDBNull(0) ? 0 : r.GetInt32(0);
+                                cantidad = r.GetInt32(1);
+                            }
+                        }
+
+                        using (MySqlCommand del = new MySqlCommand("DELETE FROM ventas WHERE id = @id", conn, tx))
+                        {
+                            del.Parameters.AddWithValue("@id", id);
+                            del.ExecuteNonQuery();
+                        }
+
+                        if (productoId > 0)
+                        {
+                            using (MySqlCommand upd = new MySqlCommand(
+                                "UPDATE productos SET cantidad = cantidad + @cantidad WHERE id = @id", conn, tx))
+                            {
+                                upd.Parameters.AddWithValue("@cantidad", cantidad);
+                                upd.Parameters.AddWithValue("@id", productoId);
+                                upd.ExecuteNonQuery();
+                            }
+                        }
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        try { tx.Rollback(); } catch { }
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("AnularVenta: " + ex);
+                mensaje = "No se pudo anular la venta en la BD.";
                 return false;
             }
         }

@@ -16,14 +16,26 @@ namespace Acuario2
         public string Usuario = "";
 
         private const string Placeholder = "Buscar producto...";
+        private const string PlaceholderVentas = "Buscar venta...";
 
         private static readonly Color ColorMenuActivo = Color.FromArgb(1, 112, 137);
         private static readonly Color ColorMenuInactivo = Color.FromArgb(2, 74, 108);
 
+        private enum Vista
+        {
+            Dashboard,
+            Inventario,
+            Ventas
+        }
+
         private List<Producto> _productos = new List<Producto>();
+        private List<Venta> _ventas = new List<Venta>();
         private bool _placeholderActivo;
+        private bool _placeholderVentaActivo;
         private int _hoverFila = -1;
         private int _hoverColumna = -1;
+        private int _hoverFilaVenta = -1;
+        private int _hoverColumnaVenta = -1;
 
         public Form1()
         {
@@ -47,18 +59,29 @@ namespace Acuario2
             txtBuscar.ForeColor = Color.FromArgb(150, 165, 178);
             cboFiltro.SelectedIndex = 0;
 
-            IrA(true);
+            _placeholderVentaActivo = true;
+            txtBuscarVenta.Text = PlaceholderVentas;
+            txtBuscarVenta.ForeColor = Color.FromArgb(150, 165, 178);
+            cboFiltroVenta.Items.Clear();
+            cboFiltroVenta.Items.Add("Todas las categorías");
+            cboFiltroVenta.Items.AddRange(ConexionDB.CategoriasVenta);
+            cboFiltroVenta.SelectedIndex = 0;
+
+            IrA(Vista.Dashboard);
         }
 
         private void RedondearControles()
         {
             UiUtil.Redondear(btnInicio, 27);
             UiUtil.Redondear(btnInventario, 27);
+            UiUtil.Redondear(btnVentas, 27);
             UiUtil.Redondear(btnReportes, 27);
             UiUtil.Redondear(btnConfig, 27);
             UiUtil.Redondear(btnSalir, 27);
             UiUtil.Redondear(btnAgregar, 24);
             UiUtil.Redondear(btnActualizar, 24);
+            UiUtil.Redondear(btnNuevaVenta, 24);
+            UiUtil.Redondear(btnActualizarVentas, 24);
             UiUtil.Redondear(panUsuario, 21);
             UiUtil.Redondear(picKpi1, 23);
             UiUtil.Redondear(picKpi2, 23);
@@ -72,6 +95,7 @@ namespace Acuario2
 
             btnInicio.Image = UiUtil.Escalar(UiUtil.Imagen("ic_dashboard.png"), 30, 30);
             btnInventario.Image = UiUtil.Escalar(UiUtil.Imagen("ic_inventario.png"), 30, 30);
+            btnVentas.Image = UiUtil.Escalar(UiUtil.Imagen("ic_ventas.png"), 30, 30);
             btnReportes.Image = UiUtil.Escalar(UiUtil.Imagen("ic_reportes.png"), 30, 30);
             btnConfig.Image = UiUtil.Escalar(UiUtil.Imagen("ic_config.png"), 30, 30);
             btnSalir.Image = UiUtil.Escalar(UiUtil.Imagen("ic_salir.png"), 30, 30);
@@ -85,35 +109,56 @@ namespace Acuario2
             picFiltro.Image = UiUtil.Escalar(UiUtil.Imagen("ic_filtro.png"), 20, 20);
             btnAgregar.Image = UiUtil.Escalar(UiUtil.Imagen("ic_plus.png"), 22, 22);
             btnActualizar.Image = UiUtil.Escalar(UiUtil.Imagen("ic_refresh.png"), 22, 22);
+
+            picLupaVenta.Image = UiUtil.Escalar(UiUtil.Imagen("ic_lupa.png"), 20, 20);
+            picFiltroVenta.Image = UiUtil.Escalar(UiUtil.Imagen("ic_filtro.png"), 20, 20);
+            btnNuevaVenta.Image = UiUtil.Escalar(UiUtil.Imagen("ic_plus.png"), 22, 22);
+            btnActualizarVentas.Image = UiUtil.Escalar(UiUtil.Imagen("ic_refresh.png"), 22, 22);
         }
 
         // ============================================================
         //  Navegación del menú lateral
         // ============================================================
 
-        private void IrA(bool dashboard)
+        private void IrA(Vista vista)
         {
-            panDashboard.Visible = dashboard;
-            panInventario.Visible = !dashboard;
-            lblTitulo.Text = dashboard ? "DASHBOARD" : "INVENTARIO";
+            bool dashboard = vista == Vista.Dashboard;
+            bool inventario = vista == Vista.Inventario;
 
-            btnInicio.BackColor = dashboard ? ColorMenuActivo : ColorMenuInactivo;
-            btnInventario.BackColor = dashboard ? ColorMenuInactivo : ColorMenuActivo;
-            btnInicio.FlatAppearance.MouseOverBackColor = dashboard ? Color.FromArgb(2, 133, 161) : Color.FromArgb(3, 92, 131);
-            btnInventario.FlatAppearance.MouseOverBackColor = dashboard ? Color.FromArgb(3, 92, 131) : Color.FromArgb(2, 133, 161);
+            panDashboard.Visible = dashboard;
+            panInventario.Visible = inventario;
+            panVentas.Visible = vista == Vista.Ventas;
+
+            lblTitulo.Text = dashboard ? "DASHBOARD" : inventario ? "INVENTARIO" : "VENTAS";
+
+            ActivarBoton(btnInicio, dashboard);
+            ActivarBoton(btnInventario, inventario);
+            ActivarBoton(btnVentas, vista == Vista.Ventas);
 
             if (dashboard) CargarDashboard();
-            else CargarInventario();
+            else if (inventario) CargarInventario();
+            else CargarVentas();
+        }
+
+        private static void ActivarBoton(Button boton, bool activo)
+        {
+            boton.BackColor = activo ? ColorMenuActivo : ColorMenuInactivo;
+            boton.FlatAppearance.MouseOverBackColor = activo ? Color.FromArgb(2, 133, 161) : Color.FromArgb(3, 92, 131);
         }
 
         private void btnInicio_Click(object sender, EventArgs e)
         {
-            IrA(true);
+            IrA(Vista.Dashboard);
         }
 
         private void btnInventario_Click(object sender, EventArgs e)
         {
-            IrA(false);
+            IrA(Vista.Inventario);
+        }
+
+        private void btnVentas_Click(object sender, EventArgs e)
+        {
+            IrA(Vista.Ventas);
         }
 
         private void btnReportes_Click(object sender, EventArgs e)
@@ -381,6 +426,218 @@ namespace Acuario2
                 MessageBox.Show(this, string.IsNullOrEmpty(mensaje) ? "No se pudo eliminar el producto." : mensaje,
                     "Inventario", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        // ============================================================
+        //  Ventas
+        // ============================================================
+
+        private void CargarVentas()
+        {
+            string mensaje;
+            _ventas = ConexionDB.ListarVentas(out mensaje);
+            AplicarFiltrosVentas();
+
+            if (!string.IsNullOrEmpty(mensaje))
+            {
+                lblAvisoVentas.ForeColor = Color.FromArgb(192, 57, 43);
+                lblAvisoVentas.Text = mensaje;
+            }
+        }
+
+        private void AplicarFiltrosVentas()
+        {
+            string texto = _placeholderVentaActivo ? "" : (txtBuscarVenta.Text ?? "").Trim();
+            string categoria = (cboFiltroVenta.SelectedItem as string) ?? "";
+
+            List<Venta> filtradas = new List<Venta>();
+            foreach (Venta v in _ventas)
+            {
+                bool okTexto = texto.Length == 0 ||
+                    (!string.IsNullOrEmpty(v.Producto) && v.Producto.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0) ||
+                    (!string.IsNullOrEmpty(v.Categoria) && v.Categoria.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0);
+
+                bool okCategoria = categoria.Length == 0 || categoria == "Todas las categorías" ||
+                    string.Equals(v.Categoria, categoria, StringComparison.CurrentCultureIgnoreCase);
+
+                if (okTexto && okCategoria) filtradas.Add(v);
+            }
+
+            dgvVentas.Rows.Clear();
+            foreach (Venta v in filtradas)
+            {
+                int i = dgvVentas.Rows.Add(v.Id, v.Producto, v.Categoria, v.Cantidad, v.Precio, v.Total, v.Fecha, "");
+                dgvVentas.Rows[i].Tag = v;
+            }
+
+            lblAvisoVentas.ForeColor = Color.FromArgb(95, 115, 135);
+            lblAvisoVentas.Text = "Mostrando " + filtradas.Count + " de " + _ventas.Count + " ventas";
+        }
+
+        private void txtBuscarVenta_TextChanged(object sender, EventArgs e)
+        {
+            if (txtBuscarVenta.Text == PlaceholderVentas) return;
+            _placeholderVentaActivo = false;
+            AplicarFiltrosVentas();
+        }
+
+        private void txtBuscarVenta_Enter(object sender, EventArgs e)
+        {
+            if (!_placeholderVentaActivo) return;
+            _placeholderVentaActivo = false;
+            txtBuscarVenta.Text = "";
+            txtBuscarVenta.ForeColor = Color.FromArgb(20, 64, 95);
+        }
+
+        private void txtBuscarVenta_Leave(object sender, EventArgs e)
+        {
+            if (_placeholderVentaActivo) return;
+            if (!string.IsNullOrWhiteSpace(txtBuscarVenta.Text)) return;
+            _placeholderVentaActivo = true;
+            txtBuscarVenta.Text = PlaceholderVentas;
+            txtBuscarVenta.ForeColor = Color.FromArgb(150, 165, 178);
+            AplicarFiltrosVentas();
+        }
+
+        private void cboFiltroVenta_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!IsHandleCreated) return;
+            AplicarFiltrosVentas();
+        }
+
+        private void btnNuevaVenta_Click(object sender, EventArgs e)
+        {
+            using (RegistrarVenta f = new RegistrarVenta())
+            {
+                f.Usuario = Usuario;
+                if (f.ShowDialog(this) == DialogResult.OK)
+                {
+                    CargarVentas();
+                    lblAvisoVentas.ForeColor = Color.FromArgb(4, 113, 122);
+                    lblAvisoVentas.Text = "Venta registrada y stock actualizado.";
+                }
+            }
+        }
+
+        private void btnActualizarVentas_Click(object sender, EventArgs e)
+        {
+            btnActualizarVentas.Enabled = false;
+            btnActualizarVentas.Text = "Actualizado";
+            CargarVentas();
+
+            Timer t = new Timer();
+            t.Interval = 1300;
+            t.Tick += delegate
+            {
+                t.Stop();
+                t.Dispose();
+                btnActualizarVentas.Text = "Actualizar";
+                btnActualizarVentas.Enabled = true;
+            };
+            t.Start();
+        }
+
+        private void AnularVenta(Venta v)
+        {
+            DialogResult r = MessageBox.Show(this,
+                "¿Desea anular la venta #" + v.Id + " de «" + v.Producto + "»?\r\n" +
+                "Se repondrán " + v.Cantidad + (v.Cantidad == 1 ? " unidad" : " unidades") + " al inventario.",
+                "Anular venta",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2);
+
+            if (r != DialogResult.Yes) return;
+
+            string mensaje;
+            if (ConexionDB.AnularVenta(v.Id, out mensaje))
+            {
+                CargarVentas();
+                lblAvisoVentas.ForeColor = Color.FromArgb(4, 113, 122);
+                lblAvisoVentas.Text = "Venta anulada y stock repuesto.";
+            }
+            else
+            {
+                MessageBox.Show(this, string.IsNullOrEmpty(mensaje) ? "No se pudo anular la venta." : mensaje,
+                    "Ventas", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void dgvVentas_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            Venta v = dgvVentas.Rows[e.RowIndex].Tag as Venta;
+            if (v == null) return;
+
+            if (e.ColumnIndex == colVentaAnular.Index) AnularVenta(v);
+        }
+
+        private void dgvVentas_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            if ((e.ColumnIndex == colVentaPrecio.Index || e.ColumnIndex == colVentaTotal.Index) && e.Value is decimal)
+            {
+                e.Value = "$" + ((decimal)e.Value).ToString("N2");
+                e.FormattingApplied = true;
+            }
+            else if (e.ColumnIndex == colVentaFecha.Index && e.Value is DateTime)
+            {
+                e.Value = ((DateTime)e.Value).ToString("dd/MM/yyyy HH:mm");
+                e.FormattingApplied = true;
+            }
+        }
+
+        private void dgvVentas_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != colVentaAnular.Index) return;
+
+            e.PaintBackground(e.ClipBounds, true);
+
+            bool hover = (_hoverFilaVenta == e.RowIndex && _hoverColumnaVenta == e.ColumnIndex);
+            if (hover)
+            {
+                Rectangle rh = new Rectangle(e.CellBounds.X + 5, e.CellBounds.Y + 6,
+                                             e.CellBounds.Width - 10, e.CellBounds.Height - 12);
+                using (GraphicsPath ruta = UiUtil.RutaRedondeada(rh, 8))
+                using (SolidBrush b = new SolidBrush(Color.FromArgb(253, 237, 235))) e.Graphics.FillPath(b, ruta);
+            }
+
+            Color tinta = hover ? Color.FromArgb(214, 69, 54) : Color.FromArgb(192, 57, 43);
+            TextRenderer.DrawText(e.Graphics, "Anular", UiUtil.Fuente(9.5f, FontStyle.Bold),
+                e.CellBounds, tinta,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
+            e.Handled = true;
+        }
+
+        private void dgvVentas_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex == _hoverFilaVenta && e.ColumnIndex == _hoverColumnaVenta) return;
+
+            int filaAnt = _hoverFilaVenta;
+            int colAnt = _hoverColumnaVenta;
+            _hoverFilaVenta = e.RowIndex;
+            _hoverColumnaVenta = e.ColumnIndex;
+
+            bool eraBoton = EsColumnaBotonVenta(colAnt);
+            bool esBoton = EsColumnaBotonVenta(_hoverColumnaVenta);
+
+            if (eraBoton && filaAnt >= 0) dgvVentas.InvalidateCell(colAnt, filaAnt);
+            if (esBoton && _hoverFilaVenta >= 0) dgvVentas.InvalidateCell(_hoverColumnaVenta, _hoverFilaVenta);
+        }
+
+        private void dgvVentas_CellLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            int filaAnt = _hoverFilaVenta;
+            int colAnt = _hoverColumnaVenta;
+            _hoverFilaVenta = -1;
+            _hoverColumnaVenta = -1;
+            if (EsColumnaBotonVenta(colAnt) && filaAnt >= 0) dgvVentas.InvalidateCell(colAnt, filaAnt);
+        }
+
+        private bool EsColumnaBotonVenta(int indice)
+        {
+            return indice >= 0 && indice == colVentaAnular.Index;
         }
 
         // ============================================================
