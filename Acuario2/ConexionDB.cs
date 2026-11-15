@@ -13,9 +13,22 @@ namespace Acuario2
         public int Id;
         public string Nombre;
         public string Especie;
+        public string Categoria; // categoría de venta (Arena, Peces, Filtros, etc.)
         public int Cantidad;
         public decimal Precio;
         public string Imagen; // ruta relativa junto al exe (vacío si no tiene)
+    }
+
+    /// <summary>Línea del carrito del punto de venta.</summary>
+    public class ItemCarrito
+    {
+        public Producto Producto;
+        public int Cantidad;
+
+        public decimal Subtotal
+        {
+            get { return Math.Round((Producto == null ? 0m : Producto.Precio) * Cantidad, 2); }
+        }
     }
 
     /// <summary>Fila del historial de ventas.</summary>
@@ -53,14 +66,14 @@ namespace Acuario2
         // Datos en memoria para modo local / demostración
         private static readonly List<Producto> _mockProductos = new List<Producto>
         {
-            new Producto { Id = 1, Nombre = "Pez Betta Corona", Especie = "Betta Splendens", Cantidad = 15, Precio = 12.50m, Imagen = "" },
-            new Producto { Id = 2, Nombre = "Pez Payaso Ocellaris", Especie = "Amphiprion ocellaris", Cantidad = 8, Precio = 25.00m, Imagen = "" },
-            new Producto { Id = 3, Nombre = "Tetra Neón", Especie = "Paracheirodon innesi", Cantidad = 45, Precio = 2.50m, Imagen = "" },
-            new Producto { Id = 4, Nombre = "Pez Cirujano Azul", Especie = "Paracanthurus hepatus", Cantidad = 3, Precio = 65.00m, Imagen = "" },
-            new Producto { Id = 5, Nombre = "Guppy Fancy", Especie = "Poecilia reticulata", Cantidad = 30, Precio = 3.00m, Imagen = "" },
-            new Producto { Id = 6, Nombre = "Pez Disco Turquesa", Especie = "Symphysodon", Cantidad = 2, Precio = 85.00m, Imagen = "" },
-            new Producto { Id = 7, Nombre = "Escalar Mármol", Especie = "Pterophyllum scalare", Cantidad = 12, Precio = 14.00m, Imagen = "" },
-            new Producto { Id = 8, Nombre = "Corydora Panda", Especie = "Corydoras panda", Cantidad = 20, Precio = 5.50m, Imagen = "" }
+            new Producto { Id = 1, Nombre = "Pez Betta Corona", Especie = "Betta Splendens", Categoria = "Peces", Cantidad = 15, Precio = 12.50m, Imagen = "" },
+            new Producto { Id = 2, Nombre = "Pez Payaso Ocellaris", Especie = "Amphiprion ocellaris", Categoria = "Peces", Cantidad = 8, Precio = 25.00m, Imagen = "" },
+            new Producto { Id = 3, Nombre = "Tetra Neón", Especie = "Paracheirodon innesi", Categoria = "Peces", Cantidad = 45, Precio = 2.50m, Imagen = "" },
+            new Producto { Id = 4, Nombre = "Pez Cirujano Azul", Especie = "Paracanthurus hepatus", Categoria = "Peces", Cantidad = 3, Precio = 65.00m, Imagen = "" },
+            new Producto { Id = 5, Nombre = "Guppy Fancy", Especie = "Poecilia reticulata", Categoria = "Peces", Cantidad = 30, Precio = 3.00m, Imagen = "" },
+            new Producto { Id = 6, Nombre = "Pez Disco Turquesa", Especie = "Symphysodon", Categoria = "Especies exóticas", Cantidad = 2, Precio = 85.00m, Imagen = "" },
+            new Producto { Id = 7, Nombre = "Escalar Mármol", Especie = "Pterophyllum scalare", Categoria = "Peces", Cantidad = 12, Precio = 14.00m, Imagen = "" },
+            new Producto { Id = 8, Nombre = "Corydora Panda", Especie = "Corydoras panda", Categoria = "Peces", Cantidad = 20, Precio = 5.50m, Imagen = "" }
         };
 
         private static readonly List<Venta> _mockVentas = new List<Venta>();
@@ -148,6 +161,7 @@ namespace Acuario2
                         id INT AUTO_INCREMENT PRIMARY KEY,
                         nombre VARCHAR(100) NOT NULL,
                         especie VARCHAR(50) NOT NULL,
+                        categoria VARCHAR(50) NOT NULL DEFAULT 'Peces',
                         cantidad INT NOT NULL DEFAULT 0,
                         precio DECIMAL(10,2) NOT NULL DEFAULT 0.00,
                         imagen VARCHAR(255) NULL
@@ -168,6 +182,39 @@ namespace Acuario2
                 using (MySqlCommand cmd = new MySqlCommand(ddl, conn))
                 {
                     cmd.ExecuteNonQuery();
+                }
+
+                // Migración: agregar la columna categoria si la tabla ya existía sin ella
+                bool existeCategoria = false;
+                using (MySqlCommand chk = new MySqlCommand(
+                    "SELECT COUNT(*) FROM information_schema.columns " +
+                    "WHERE table_schema = DATABASE() AND table_name = 'productos' AND column_name = 'categoria'", conn))
+                {
+                    existeCategoria = Convert.ToInt64(chk.ExecuteScalar()) > 0;
+                }
+
+                if (!existeCategoria)
+                {
+                    using (MySqlCommand alt = new MySqlCommand(
+                        "ALTER TABLE productos ADD COLUMN categoria VARCHAR(50) NOT NULL DEFAULT 'Peces'", conn))
+                    {
+                        alt.ExecuteNonQuery();
+                    }
+
+                    // Clasificación inicial de los productos existentes
+                    using (MySqlCommand upd = new MySqlCommand(
+                        "UPDATE productos SET categoria = 'Especies exóticas' " +
+                        "WHERE nombre LIKE '%Disco%' OR nombre LIKE '%Plecostomus%'", conn))
+                    {
+                        upd.ExecuteNonQuery();
+                    }
+                }
+
+                // Normalizar filas sin categoría
+                using (MySqlCommand norm = new MySqlCommand(
+                    "UPDATE productos SET categoria = 'Peces' WHERE categoria IS NULL OR categoria = ''", conn))
+                {
+                    norm.ExecuteNonQuery();
                 }
 
                 // Asegurar usuarios por defecto
@@ -191,15 +238,15 @@ namespace Acuario2
                     if (pCount == 0)
                     {
                         string insProd = @"
-                            INSERT INTO productos (nombre, especie, cantidad, precio, imagen) VALUES
-                            ('Pez Betta Corona', 'Betta Splendens', 15, 12.50, ''),
-                            ('Pez Payaso Ocellaris', 'Amphiprion ocellaris', 8, 25.00, ''),
-                            ('Tetra Neón', 'Paracheirodon innesi', 45, 2.50, ''),
-                            ('Pez Cirujano Azul', 'Paracanthurus hepatus', 3, 65.00, ''),
-                            ('Guppy Fancy', 'Poecilia reticulata', 30, 3.00, ''),
-                            ('Pez Disco Turquesa', 'Symphysodon', 2, 85.00, ''),
-                            ('Escalar Mármol', 'Pterophyllum scalare', 12, 14.00, ''),
-                            ('Corydora Panda', 'Corydoras panda', 20, 5.50, '');";
+                            INSERT INTO productos (nombre, especie, categoria, cantidad, precio, imagen) VALUES
+                            ('Pez Betta Corona', 'Betta Splendens', 'Peces', 15, 12.50, ''),
+                            ('Pez Payaso Ocellaris', 'Amphiprion ocellaris', 'Peces', 8, 25.00, ''),
+                            ('Tetra Neón', 'Paracheirodon innesi', 'Peces', 45, 2.50, ''),
+                            ('Pez Cirujano Azul', 'Paracanthurus hepatus', 'Peces', 3, 65.00, ''),
+                            ('Guppy Fancy', 'Poecilia reticulata', 'Peces', 30, 3.00, ''),
+                            ('Pez Disco Turquesa', 'Symphysodon', 'Especies exóticas', 2, 85.00, ''),
+                            ('Escalar Mármol', 'Pterophyllum scalare', 'Peces', 12, 14.00, ''),
+                            ('Corydora Panda', 'Corydoras panda', 'Peces', 20, 5.50, '');";
                         using (MySqlCommand ins = new MySqlCommand(insProd, conn))
                         {
                             ins.ExecuteNonQuery();
@@ -339,10 +386,35 @@ namespace Acuario2
             p.Id = r.GetInt32(r.GetOrdinal("id"));
             p.Nombre = r.GetString(r.GetOrdinal("nombre"));
             p.Especie = r.GetString(r.GetOrdinal("especie"));
+            try
+            {
+                int i = r.GetOrdinal("categoria");
+                string cat = r.IsDBNull(i) ? string.Empty : r.GetString(i);
+                p.Categoria = string.IsNullOrWhiteSpace(cat) ? "Peces" : cat;
+            }
+            catch
+            {
+                p.Categoria = CategoriaSugerida(p);
+            }
             p.Cantidad = r.GetInt32(r.GetOrdinal("cantidad"));
             p.Precio = r.GetDecimal(r.GetOrdinal("precio"));
             p.Imagen = r.IsDBNull(r.GetOrdinal("imagen")) ? string.Empty : r.GetString(r.GetOrdinal("imagen"));
             return p;
+        }
+
+        /// <summary>Copia un producto (usada por el modo local y los respaldos).</summary>
+        private static Producto CopiarProducto(Producto p)
+        {
+            return new Producto
+            {
+                Id = p.Id,
+                Nombre = p.Nombre,
+                Especie = p.Especie,
+                Categoria = p.Categoria,
+                Cantidad = p.Cantidad,
+                Precio = p.Precio,
+                Imagen = p.Imagen
+            };
         }
 
         /// <summary>Lista todos los productos ordenados por id.</summary>
@@ -352,15 +424,7 @@ namespace Acuario2
 
             if (ModoOffline || !EstaConfiguradaCadena())
             {
-                return _mockProductos.Select(p => new Producto
-                {
-                    Id = p.Id,
-                    Nombre = p.Nombre,
-                    Especie = p.Especie,
-                    Cantidad = p.Cantidad,
-                    Precio = p.Precio,
-                    Imagen = p.Imagen
-                }).ToList();
+                return _mockProductos.Select(CopiarProducto).ToList();
             }
 
             List<Producto> lista = new List<Producto>();
@@ -368,7 +432,7 @@ namespace Acuario2
             {
                 using (MySqlConnection conn = Abrir())
                 using (MySqlCommand cmd = new MySqlCommand(
-                    "SELECT id, nombre, especie, cantidad, precio, imagen FROM productos ORDER BY id", conn))
+                    "SELECT id, nombre, especie, categoria, cantidad, precio, imagen FROM productos ORDER BY id", conn))
                 using (MySqlDataReader r = cmd.ExecuteReader())
                 {
                     while (r.Read()) lista.Add(Leer(r));
@@ -378,7 +442,7 @@ namespace Acuario2
             {
                 System.Diagnostics.Debug.WriteLine("ListarProductos: " + ex);
                 mensaje = "Operando con datos locales (sin conexión a BD).";
-                return _mockProductos.ToList();
+                return _mockProductos.Select(CopiarProducto).ToList();
             }
             return lista;
         }
@@ -390,6 +454,7 @@ namespace Acuario2
 
             if (ModoOffline || !EstaConfiguradaCadena())
             {
+                if (string.IsNullOrWhiteSpace(p.Categoria)) p.Categoria = "Peces";
                 int nuevoId = _mockProductos.Count > 0 ? _mockProductos.Max(x => x.Id) + 1 : 1;
                 p.Id = nuevoId;
                 _mockProductos.Add(p);
@@ -400,11 +465,12 @@ namespace Acuario2
             {
                 using (MySqlConnection conn = Abrir())
                 using (MySqlCommand cmd = new MySqlCommand(
-                    "INSERT INTO productos (nombre, especie, cantidad, precio, imagen) " +
-                    "VALUES (@nombre, @especie, @cantidad, @precio, @imagen)", conn))
+                    "INSERT INTO productos (nombre, especie, categoria, cantidad, precio, imagen) " +
+                    "VALUES (@nombre, @especie, @categoria, @cantidad, @precio, @imagen)", conn))
                 {
                     cmd.Parameters.AddWithValue("@nombre", p.Nombre);
                     cmd.Parameters.AddWithValue("@especie", p.Especie);
+                    cmd.Parameters.AddWithValue("@categoria", string.IsNullOrWhiteSpace(p.Categoria) ? "Peces" : p.Categoria);
                     cmd.Parameters.AddWithValue("@cantidad", p.Cantidad);
                     cmd.Parameters.AddWithValue("@precio", p.Precio);
                     cmd.Parameters.AddWithValue("@imagen", string.IsNullOrEmpty(p.Imagen) ? (object)DBNull.Value : p.Imagen);
@@ -432,6 +498,7 @@ namespace Acuario2
                 {
                     item.Nombre = p.Nombre;
                     item.Especie = p.Especie;
+                    item.Categoria = string.IsNullOrWhiteSpace(p.Categoria) ? "Peces" : p.Categoria;
                     item.Cantidad = p.Cantidad;
                     item.Precio = p.Precio;
                     item.Imagen = p.Imagen;
@@ -443,11 +510,12 @@ namespace Acuario2
             {
                 using (MySqlConnection conn = Abrir())
                 using (MySqlCommand cmd = new MySqlCommand(
-                    "UPDATE productos SET nombre = @nombre, especie = @especie, cantidad = @cantidad, " +
-                    "precio = @precio, imagen = @imagen WHERE id = @id", conn))
+                    "UPDATE productos SET nombre = @nombre, especie = @especie, categoria = @categoria, " +
+                    "cantidad = @cantidad, precio = @precio, imagen = @imagen WHERE id = @id", conn))
                 {
                     cmd.Parameters.AddWithValue("@nombre", p.Nombre);
                     cmd.Parameters.AddWithValue("@especie", p.Especie);
+                    cmd.Parameters.AddWithValue("@categoria", string.IsNullOrWhiteSpace(p.Categoria) ? "Peces" : p.Categoria);
                     cmd.Parameters.AddWithValue("@cantidad", p.Cantidad);
                     cmd.Parameters.AddWithValue("@precio", p.Precio);
                     cmd.Parameters.AddWithValue("@imagen", string.IsNullOrEmpty(p.Imagen) ? (object)DBNull.Value : p.Imagen);
@@ -744,6 +812,132 @@ namespace Acuario2
             }
         }
 
+        /// <summary>
+        /// Descuenta del inventario las cantidades del carrito en una sola transacción.
+        /// No registra historial de ventas: solo actualiza el stock.
+        /// </summary>
+        public static bool DescontarStock(List<ItemCarrito> items, out string mensaje)
+        {
+            mensaje = string.Empty;
+
+            if (items == null || items.Count == 0)
+            {
+                mensaje = "El carrito está vacío.";
+                return false;
+            }
+
+            // Agrupar por producto para validar el total aunque haya líneas repetidas
+            Dictionary<int, int> cantidades = new Dictionary<int, int>();
+            Dictionary<int, string> nombres = new Dictionary<int, string>();
+            foreach (ItemCarrito it in items)
+            {
+                if (it == null || it.Producto == null)
+                {
+                    mensaje = "Hay un producto inválido en el carrito.";
+                    return false;
+                }
+                if (it.Cantidad <= 0)
+                {
+                    mensaje = "La cantidad de «" + it.Producto.Nombre + "» debe ser mayor que cero.";
+                    return false;
+                }
+
+                int id = it.Producto.Id;
+                int actual;
+                cantidades[id] = cantidades.TryGetValue(id, out actual) ? actual + it.Cantidad : it.Cantidad;
+                nombres[id] = it.Producto.Nombre;
+            }
+
+            if (ModoOffline || !EstaConfiguradaCadena())
+            {
+                foreach (KeyValuePair<int, int> par in cantidades)
+                {
+                    Producto prod = _mockProductos.FirstOrDefault(x => x.Id == par.Key);
+                    if (prod == null)
+                    {
+                        mensaje = "El producto «" + nombres[par.Key] + "» ya no existe en el inventario.";
+                        return false;
+                    }
+                    if (prod.Cantidad < par.Value)
+                    {
+                        mensaje = "Stock insuficiente: solo quedan " + prod.Cantidad + " unidades de «" + prod.Nombre + "».";
+                        return false;
+                    }
+                }
+
+                foreach (KeyValuePair<int, int> par in cantidades)
+                {
+                    Producto prod = _mockProductos.FirstOrDefault(x => x.Id == par.Key);
+                    prod.Cantidad -= par.Value;
+                }
+                return true;
+            }
+
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (KeyValuePair<int, int> par in cantidades)
+                        {
+                            int stock;
+                            string nombre;
+                            using (MySqlCommand sel = new MySqlCommand(
+                                "SELECT nombre, cantidad FROM productos WHERE id = @id FOR UPDATE", conn, tx))
+                            {
+                                sel.Parameters.AddWithValue("@id", par.Key);
+                                using (MySqlDataReader r = sel.ExecuteReader())
+                                {
+                                    if (!r.Read())
+                                    {
+                                        tx.Rollback();
+                                        mensaje = "El producto «" + nombres[par.Key] + "» ya no existe en el inventario.";
+                                        return false;
+                                    }
+                                    nombre = r.GetString(0);
+                                    stock = r.GetInt32(1);
+                                }
+                            }
+
+                            if (stock < par.Value)
+                            {
+                                tx.Rollback();
+                                mensaje = "Stock insuficiente: solo quedan " + stock + " unidades de «" + nombre + "».";
+                                return false;
+                            }
+                        }
+
+                        foreach (KeyValuePair<int, int> par in cantidades)
+                        {
+                            using (MySqlCommand upd = new MySqlCommand(
+                                "UPDATE productos SET cantidad = cantidad - @cantidad WHERE id = @id", conn, tx))
+                            {
+                                upd.Parameters.AddWithValue("@cantidad", par.Value);
+                                upd.Parameters.AddWithValue("@id", par.Key);
+                                upd.ExecuteNonQuery();
+                            }
+                        }
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        try { tx.Rollback(); } catch { }
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("DescontarStock: " + ex);
+                mensaje = "No se pudo actualizar el stock en la BD.";
+                return false;
+            }
+        }
+
         // ============================================================
         //  Agregados del dashboard
         // ============================================================
@@ -920,6 +1114,7 @@ namespace Acuario2
             {
                 return _mockProductos.Where(x => x.Cantidad <= 3)
                                      .OrderBy(x => x.Cantidad)
+                                     .Select(CopiarProducto)
                                      .ToList();
             }
 
@@ -928,7 +1123,7 @@ namespace Acuario2
             {
                 using (MySqlConnection conn = Abrir())
                 using (MySqlCommand cmd = new MySqlCommand(
-                    "SELECT id, nombre, especie, cantidad, precio, imagen FROM productos " +
+                    "SELECT id, nombre, especie, categoria, cantidad, precio, imagen FROM productos " +
                     "WHERE cantidad <= 3 ORDER BY cantidad ASC", conn))
                 using (MySqlDataReader r = cmd.ExecuteReader())
                 {
@@ -940,6 +1135,7 @@ namespace Acuario2
                 System.Diagnostics.Debug.WriteLine("InventarioBajo: " + ex);
                 return _mockProductos.Where(x => x.Cantidad <= 3)
                                      .OrderBy(x => x.Cantidad)
+                                     .Select(CopiarProducto)
                                      .ToList();
             }
             return lista;

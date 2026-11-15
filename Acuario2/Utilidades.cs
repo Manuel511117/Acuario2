@@ -207,5 +207,43 @@ namespace Acuario2
             _imagenes[clave] = mini;
             return mini;
         }
+
+        /// <summary>
+        /// Imagen para las tarjetas del punto de venta: recorta/centra la foto en un
+        /// rectángulo fijo o dibuja un marcador si el producto no tiene imagen.
+        /// </summary>
+        public static Image ImagenTarjeta(string rutaRelativa, int ancho, int alto)
+        {
+            if (ancho <= 0 || alto <= 0) return null;
+
+            Bitmap bmp = new Bitmap(ancho, alto);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                g.Clear(Color.FromArgb(226, 236, 242));
+
+                Image img = ImagenProducto(rutaRelativa);
+                if (img != null)
+                {
+                    double escala = Math.Max((double)ancho / img.Width, (double)alto / img.Height);
+                    int w = Math.Max(1, (int)Math.Round(img.Width * escala));
+                    int h = Math.Max(1, (int)Math.Round(img.Height * escala));
+                    g.DrawImage(img, new Rectangle((ancho - w) / 2, (alto - h) / 2, w, h));
+                }
+                else
+                {
+                    Color c = Color.FromArgb(150, 176, 192);
+                    using (Pen p = new Pen(c, 2f)) g.DrawRectangle(p, 6, 6, ancho - 13, alto - 13);
+                    using (Pen p = new Pen(c, 3f))
+                    {
+                        g.DrawLine(p, ancho / 2f - 10, alto / 2f, ancho / 2f + 10, alto / 2f);
+                        g.DrawLine(p, ancho / 2f, alto / 2f - 10, ancho / 2f, alto / 2f + 10);
+                    }
+                }
+            }
+            return bmp;
+        }
     }
 }

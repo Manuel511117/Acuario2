@@ -26,6 +26,18 @@ namespace Acuario2
         {
             RedondearBotones();
 
+            cboCategoria.Items.Clear();
+            cboCategoria.Items.AddRange(ConexionDB.CategoriasVenta);
+            if (Editando != null && !string.IsNullOrEmpty(Editando.Categoria) &&
+                cboCategoria.Items.Contains(Editando.Categoria))
+            {
+                cboCategoria.SelectedItem = Editando.Categoria;
+            }
+            else
+            {
+                cboCategoria.SelectedItem = "Peces";
+            }
+
             if (Editando != null)
             {
                 lblEncabezado.Text = "Editar Producto";
@@ -106,6 +118,7 @@ namespace Acuario2
 
             string nombre = (txtNombre.Text ?? "").Trim();
             string especie = (cboEspecie.Text ?? "").Trim();
+            string categoria = (cboCategoria.SelectedItem as string) ?? "";
 
             if (nombre.Length == 0)
             {
@@ -119,10 +132,17 @@ namespace Acuario2
                 cboEspecie.Focus();
                 return;
             }
+            if (categoria.Length == 0)
+            {
+                MostrarError("Seleccione la categoría de venta del producto.");
+                cboCategoria.Focus();
+                return;
+            }
 
             Producto p = new Producto();
             p.Nombre = nombre;
             p.Especie = especie;
+            p.Categoria = categoria;
             p.Cantidad = (int)numCantidad.Value;
             p.Precio = numPrecio.Value;
             p.Imagen = _imagenRelativa;

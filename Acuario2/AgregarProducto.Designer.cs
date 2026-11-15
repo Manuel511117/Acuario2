@@ -39,6 +39,8 @@ namespace Acuario2
             this.cboEspecie = new System.Windows.Forms.ComboBox();
             this.lblPrecio = new System.Windows.Forms.Label();
             this.numPrecio = new System.Windows.Forms.NumericUpDown();
+            this.lblCategoria = new System.Windows.Forms.Label();
+            this.cboCategoria = new System.Windows.Forms.ComboBox();
             this.lblImagen = new System.Windows.Forms.Label();
             this.btnImagen = new System.Windows.Forms.Button();
             this.txtRuta = new System.Windows.Forms.TextBox();
@@ -205,15 +207,38 @@ namespace Acuario2
             this.numPrecio.Size = new System.Drawing.Size(272, 32);
             this.numPrecio.TabIndex = 9;
             // 
+            // lblCategoria
+            // 
+            this.lblCategoria.AutoSize = false;
+            this.lblCategoria.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.lblCategoria.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
+            this.lblCategoria.Location = new System.Drawing.Point(24, 230);
+            this.lblCategoria.Name = "lblCategoria";
+            this.lblCategoria.Size = new System.Drawing.Size(576, 22);
+            this.lblCategoria.TabIndex = 10;
+            this.lblCategoria.Text = "Categoría de venta";
+            this.lblCategoria.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cboCategoria
+            // 
+            this.cboCategoria.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboCategoria.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cboCategoria.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.cboCategoria.FormattingEnabled = true;
+            this.cboCategoria.Location = new System.Drawing.Point(24, 254);
+            this.cboCategoria.Name = "cboCategoria";
+            this.cboCategoria.Size = new System.Drawing.Size(576, 33);
+            this.cboCategoria.TabIndex = 11;
+            // 
             // lblImagen
             // 
             this.lblImagen.AutoSize = false;
             this.lblImagen.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.lblImagen.ForeColor = System.Drawing.Color.FromArgb(20, 64, 95);
-            this.lblImagen.Location = new System.Drawing.Point(24, 238);
+            this.lblImagen.Location = new System.Drawing.Point(24, 300);
             this.lblImagen.Name = "lblImagen";
             this.lblImagen.Size = new System.Drawing.Size(576, 22);
-            this.lblImagen.TabIndex = 10;
+            this.lblImagen.TabIndex = 12;
             this.lblImagen.Text = "Imagen del producto";
             this.lblImagen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -227,10 +252,10 @@ namespace Acuario2
             this.btnImagen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnImagen.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.btnImagen.ForeColor = System.Drawing.Color.White;
-            this.btnImagen.Location = new System.Drawing.Point(24, 264);
+            this.btnImagen.Location = new System.Drawing.Point(24, 326);
             this.btnImagen.Name = "btnImagen";
             this.btnImagen.Size = new System.Drawing.Size(184, 34);
-            this.btnImagen.TabIndex = 11;
+            this.btnImagen.TabIndex = 13;
             this.btnImagen.Text = "Seleccionar imagen...";
             this.btnImagen.UseVisualStyleBackColor = false;
             this.btnImagen.Click += new System.EventHandler(this.btnImagen_Click);
@@ -241,42 +266,42 @@ namespace Acuario2
             this.txtRuta.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtRuta.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.txtRuta.ForeColor = System.Drawing.Color.FromArgb(95, 115, 135);
-            this.txtRuta.Location = new System.Drawing.Point(220, 264);
+            this.txtRuta.Location = new System.Drawing.Point(220, 326);
             this.txtRuta.Name = "txtRuta";
             this.txtRuta.ReadOnly = true;
             this.txtRuta.Size = new System.Drawing.Size(380, 30);
-            this.txtRuta.TabIndex = 12;
+            this.txtRuta.TabIndex = 14;
             this.txtRuta.TabStop = false;
             // 
             // picImagen
             // 
             this.picImagen.BackColor = System.Drawing.Color.White;
             this.picImagen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picImagen.Location = new System.Drawing.Point(24, 312);
+            this.picImagen.Location = new System.Drawing.Point(24, 374);
             this.picImagen.Name = "picImagen";
             this.picImagen.Size = new System.Drawing.Size(170, 130);
             this.picImagen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picImagen.TabIndex = 13;
+            this.picImagen.TabIndex = 15;
             this.picImagen.TabStop = false;
             // 
             // lblInfo
             // 
             this.lblInfo.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.lblInfo.ForeColor = System.Drawing.Color.FromArgb(110, 128, 145);
-            this.lblInfo.Location = new System.Drawing.Point(214, 312);
+            this.lblInfo.Location = new System.Drawing.Point(214, 374);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(386, 130);
-            this.lblInfo.TabIndex = 14;
+            this.lblInfo.TabIndex = 16;
             this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblError
             // 
             this.lblError.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.lblError.ForeColor = System.Drawing.Color.FromArgb(192, 57, 43);
-            this.lblError.Location = new System.Drawing.Point(24, 454);
+            this.lblError.Location = new System.Drawing.Point(24, 516);
             this.lblError.Name = "lblError";
             this.lblError.Size = new System.Drawing.Size(576, 26);
-            this.lblError.TabIndex = 15;
+            this.lblError.TabIndex = 17;
             this.lblError.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblError.Visible = false;
             // 
@@ -290,10 +315,10 @@ namespace Acuario2
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuardar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnGuardar.ForeColor = System.Drawing.Color.White;
-            this.btnGuardar.Location = new System.Drawing.Point(316, 494);
+            this.btnGuardar.Location = new System.Drawing.Point(316, 556);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(144, 42);
-            this.btnGuardar.TabIndex = 16;
+            this.btnGuardar.TabIndex = 18;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.UseVisualStyleBackColor = false;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
@@ -309,10 +334,10 @@ namespace Acuario2
             this.btnCancelar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnCancelar.ForeColor = System.Drawing.Color.FromArgb(3, 50, 90);
-            this.btnCancelar.Location = new System.Drawing.Point(472, 494);
+            this.btnCancelar.Location = new System.Drawing.Point(472, 556);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(128, 42);
-            this.btnCancelar.TabIndex = 17;
+            this.btnCancelar.TabIndex = 19;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = false;
             // 
@@ -323,7 +348,7 @@ namespace Acuario2
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(245, 248, 250);
             this.CancelButton = this.btnCancelar;
-            this.ClientSize = new System.Drawing.Size(624, 556);
+            this.ClientSize = new System.Drawing.Size(624, 618);
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.lblError);
@@ -332,6 +357,8 @@ namespace Acuario2
             this.Controls.Add(this.txtRuta);
             this.Controls.Add(this.btnImagen);
             this.Controls.Add(this.lblImagen);
+            this.Controls.Add(this.cboCategoria);
+            this.Controls.Add(this.lblCategoria);
             this.Controls.Add(this.numPrecio);
             this.Controls.Add(this.lblPrecio);
             this.Controls.Add(this.cboEspecie);
@@ -371,6 +398,8 @@ namespace Acuario2
         private System.Windows.Forms.ComboBox cboEspecie;
         private System.Windows.Forms.Label lblPrecio;
         private System.Windows.Forms.NumericUpDown numPrecio;
+        private System.Windows.Forms.Label lblCategoria;
+        private System.Windows.Forms.ComboBox cboCategoria;
         private System.Windows.Forms.Label lblImagen;
         private System.Windows.Forms.Button btnImagen;
         private System.Windows.Forms.TextBox txtRuta;

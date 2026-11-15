@@ -71,13 +71,10 @@
     <Compile Include="AgregarProducto.Designer.cs">
       <DependentUpon>AgregarProducto.cs</DependentUpon>
     </Compile>
-    <Compile Include="RegistrarVenta.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RegistrarVenta.Designer.cs">
-      <DependentUpon>RegistrarVenta.cs</DependentUpon>
-    </Compile>
     <Compile Include="GraficaBarras.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TarjetasVenta.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Utilidades.cs" />

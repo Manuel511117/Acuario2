@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Acuario2
@@ -16,7 +17,6 @@ namespace Acuario2
         public string Usuario = "";
 
         private const string Placeholder = "Buscar producto...";
-        private const string PlaceholderVentas = "Buscar venta...";
 
         private static readonly Color ColorMenuActivo = Color.FromArgb(1, 112, 137);
         private static readonly Color ColorMenuInactivo = Color.FromArgb(2, 74, 108);
@@ -29,13 +29,11 @@ namespace Acuario2
         }
 
         private List<Producto> _productos = new List<Producto>();
-        private List<Venta> _ventas = new List<Venta>();
+        private readonly List<ItemCarrito> _carrito = new List<ItemCarrito>();
         private bool _placeholderActivo;
-        private bool _placeholderVentaActivo;
         private int _hoverFila = -1;
         private int _hoverColumna = -1;
-        private int _hoverFilaVenta = -1;
-        private int _hoverColumnaVenta = -1;
+        private bool _inicializandoVentas;
 
         public Form1()
         {
@@ -59,13 +57,11 @@ namespace Acuario2
             txtBuscar.ForeColor = Color.FromArgb(150, 165, 178);
             cboFiltro.SelectedIndex = 0;
 
-            _placeholderVentaActivo = true;
-            txtBuscarVenta.Text = PlaceholderVentas;
-            txtBuscarVenta.ForeColor = Color.FromArgb(150, 165, 178);
-            cboFiltroVenta.Items.Clear();
-            cboFiltroVenta.Items.Add("Todas las categorías");
-            cboFiltroVenta.Items.AddRange(ConexionDB.CategoriasVenta);
-            cboFiltroVenta.SelectedIndex = 0;
+            _inicializandoVentas = true;
+            cboCategoriaVenta.Items.Clear();
+            cboCategoriaVenta.Items.AddRange(ConexionDB.CategoriasVenta);
+            SeleccionarCategoriaInicial();
+            _inicializandoVentas = false;
 
             IrA(Vista.Dashboard);
         }
@@ -80,8 +76,9 @@ namespace Acuario2
             UiUtil.Redondear(btnSalir, 27);
             UiUtil.Redondear(btnAgregar, 24);
             UiUtil.Redondear(btnActualizar, 24);
-            UiUtil.Redondear(btnNuevaVenta, 24);
-            UiUtil.Redondear(btnActualizarVentas, 24);
+            UiUtil.Redondear(btnActualizarVentas, 18);
+            UiUtil.Redondear(btnVaciarCarrito, 12);
+            UiUtil.Redondear(btnRegistrarVenta, 12);
             UiUtil.Redondear(panUsuario, 21);
             UiUtil.Redondear(picKpi1, 23);
             UiUtil.Redondear(picKpi2, 23);
@@ -110,10 +107,7 @@ namespace Acuario2
             btnAgregar.Image = UiUtil.Escalar(UiUtil.Imagen("ic_plus.png"), 22, 22);
             btnActualizar.Image = UiUtil.Escalar(UiUtil.Imagen("ic_refresh.png"), 22, 22);
 
-            picLupaVenta.Image = UiUtil.Escalar(UiUtil.Imagen("ic_lupa.png"), 20, 20);
-            picFiltroVenta.Image = UiUtil.Escalar(UiUtil.Imagen("ic_filtro.png"), 20, 20);
-            btnNuevaVenta.Image = UiUtil.Escalar(UiUtil.Imagen("ic_plus.png"), 22, 22);
-            btnActualizarVentas.Image = UiUtil.Escalar(UiUtil.Imagen("ic_refresh.png"), 22, 22);
+            btnActualizarVentas.Image = UiUtil.Escalar(UiUtil.Imagen("ic_refresh.png"), 20, 20);
         }
 
         // ============================================================
@@ -297,7 +291,8 @@ namespace Acuario2
             {
                 bool okTexto = texto.Length == 0 ||
                     (!string.IsNullOrEmpty(p.Nombre) && p.Nombre.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0) ||
-                    (!string.IsNullOrEmpty(p.Especie) && p.Especie.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0);
+                    (!string.IsNullOrEmpty(p.Especie) && p.Especie.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0) ||
+                    (!string.IsNullOrEmpty(p.Categoria) && p.Categoria.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0);
 
                 bool okEspecie = especie.Length == 0 || especie == "Todas las especies" ||
                     string.Equals(p.Especie, especie, StringComparison.CurrentCultureIgnoreCase);
@@ -312,6 +307,7 @@ namespace Acuario2
                     p.Id,
                     p.Nombre,
                     p.Especie,
+                    p.Categoria,
                     p.Cantidad,
                     p.Precio,
                     UiUtil.Minatura(p.Imagen, 40),
@@ -429,93 +425,242 @@ namespace Acuario2
         }
 
         // ============================================================
-        //  Ventas
+        //  Ventas (punto de venta: catálogo + carrito)
         // ============================================================
 
         private void CargarVentas()
         {
             string mensaje;
-            _ventas = ConexionDB.ListarVentas(out mensaje);
-            AplicarFiltrosVentas();
+            _productos = ConexionDB.ListarProductos(out mensaje);
 
-            if (!string.IsNullOrEmpty(mensaje))
+            if (cboCategoriaVenta.SelectedIndex < 0 && cboCategoriaVenta.Items.Count > 0)
             {
-                lblAvisoVentas.ForeColor = Color.FromArgb(192, 57, 43);
-                lblAvisoVentas.Text = mensaje;
-            }
-        }
-
-        private void AplicarFiltrosVentas()
-        {
-            string texto = _placeholderVentaActivo ? "" : (txtBuscarVenta.Text ?? "").Trim();
-            string categoria = (cboFiltroVenta.SelectedItem as string) ?? "";
-
-            List<Venta> filtradas = new List<Venta>();
-            foreach (Venta v in _ventas)
-            {
-                bool okTexto = texto.Length == 0 ||
-                    (!string.IsNullOrEmpty(v.Producto) && v.Producto.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0) ||
-                    (!string.IsNullOrEmpty(v.Categoria) && v.Categoria.IndexOf(texto, StringComparison.CurrentCultureIgnoreCase) >= 0);
-
-                bool okCategoria = categoria.Length == 0 || categoria == "Todas las categorías" ||
-                    string.Equals(v.Categoria, categoria, StringComparison.CurrentCultureIgnoreCase);
-
-                if (okTexto && okCategoria) filtradas.Add(v);
+                _inicializandoVentas = true;
+                SeleccionarCategoriaInicial();
+                _inicializandoVentas = false;
             }
 
-            dgvVentas.Rows.Clear();
-            foreach (Venta v in filtradas)
+            ReconciliarCarrito();
+            CargarCatalogo();
+            ActualizarCarrito();
+
+            if (!string.IsNullOrEmpty(mensaje)) AvisoVentas(mensaje, true);
+        }
+
+        /// <summary>
+        /// Elige la categoría con la que abre el punto de venta: «Peces» si existe,
+        /// o la primera categoría que tenga productos.
+        /// </summary>
+        private void SeleccionarCategoriaInicial()
+        {
+            if (cboCategoriaVenta.Items.Count == 0) return;
+
+            int indicePeces = cboCategoriaVenta.Items.IndexOf("Peces");
+            if (indicePeces >= 0)
             {
-                int i = dgvVentas.Rows.Add(v.Id, v.Producto, v.Categoria, v.Cantidad, v.Precio, v.Total, v.Fecha, "");
-                dgvVentas.Rows[i].Tag = v;
+                cboCategoriaVenta.SelectedIndex = indicePeces;
+                return;
             }
 
-            lblAvisoVentas.ForeColor = Color.FromArgb(95, 115, 135);
-            lblAvisoVentas.Text = "Mostrando " + filtradas.Count + " de " + _ventas.Count + " ventas";
-        }
-
-        private void txtBuscarVenta_TextChanged(object sender, EventArgs e)
-        {
-            if (txtBuscarVenta.Text == PlaceholderVentas) return;
-            _placeholderVentaActivo = false;
-            AplicarFiltrosVentas();
-        }
-
-        private void txtBuscarVenta_Enter(object sender, EventArgs e)
-        {
-            if (!_placeholderVentaActivo) return;
-            _placeholderVentaActivo = false;
-            txtBuscarVenta.Text = "";
-            txtBuscarVenta.ForeColor = Color.FromArgb(20, 64, 95);
-        }
-
-        private void txtBuscarVenta_Leave(object sender, EventArgs e)
-        {
-            if (_placeholderVentaActivo) return;
-            if (!string.IsNullOrWhiteSpace(txtBuscarVenta.Text)) return;
-            _placeholderVentaActivo = true;
-            txtBuscarVenta.Text = PlaceholderVentas;
-            txtBuscarVenta.ForeColor = Color.FromArgb(150, 165, 178);
-            AplicarFiltrosVentas();
-        }
-
-        private void cboFiltroVenta_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!IsHandleCreated) return;
-            AplicarFiltrosVentas();
-        }
-
-        private void btnNuevaVenta_Click(object sender, EventArgs e)
-        {
-            using (RegistrarVenta f = new RegistrarVenta())
+            for (int i = 0; i < cboCategoriaVenta.Items.Count; i++)
             {
-                f.Usuario = Usuario;
-                if (f.ShowDialog(this) == DialogResult.OK)
+                string categoria = cboCategoriaVenta.Items[i] as string;
+                if (_productos.Exists(p => string.Equals(p.Categoria, categoria, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    CargarVentas();
-                    lblAvisoVentas.ForeColor = Color.FromArgb(4, 113, 122);
-                    lblAvisoVentas.Text = "Venta registrada y stock actualizado.";
+                    cboCategoriaVenta.SelectedIndex = i;
+                    return;
                 }
+            }
+
+            cboCategoriaVenta.SelectedIndex = 0;
+        }
+
+        /// <summary>Vuelve a enlazar el carrito con el inventario recién cargado.</summary>
+        private void ReconciliarCarrito()
+        {
+            for (int i = _carrito.Count - 1; i >= 0; i--)
+            {
+                ItemCarrito item = _carrito[i];
+                Producto actual = _productos.FirstOrDefault(p => p.Id == item.Producto.Id);
+                if (actual == null || actual.Cantidad <= 0)
+                {
+                    _carrito.RemoveAt(i);
+                    continue;
+                }
+
+                item.Producto = actual;
+                if (item.Cantidad > actual.Cantidad) item.Cantidad = actual.Cantidad;
+            }
+        }
+
+        /// <summary>Reconstruye las tarjetas del catálogo según la categoría elegida.</summary>
+        private void CargarCatalogo()
+        {
+            string categoria = (cboCategoriaVenta.SelectedItem as string) ?? "";
+
+            flpCatalogo.SuspendLayout();
+            flpCatalogo.Controls.Clear();
+
+            int mostrados = 0;
+            foreach (Producto p in _productos)
+            {
+                if (!string.IsNullOrEmpty(categoria) &&
+                    !string.Equals(p.Categoria, categoria, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                TarjetaProducto tarjeta = new TarjetaProducto(p);
+                tarjeta.Agregar += TarjetaProducto_Agregar;
+                flpCatalogo.Controls.Add(tarjeta);
+                mostrados++;
+            }
+
+            flpCatalogo.ResumeLayout();
+
+            lblCatalogoVacio.Visible = mostrados == 0;
+            if (mostrados == 0) lblCatalogoVacio.BringToFront();
+
+            if (mostrados == 0)
+            {
+                AvisoVentas("No hay productos en la categoría «" + categoria + "».", false);
+            }
+            else
+            {
+                AvisoVentas(mostrados + (mostrados == 1 ? " producto" : " productos") + " en «" + categoria + "».", false);
+            }
+        }
+
+        /// <summary>Reconstruye las tarjetas del carrito y actualiza el total.</summary>
+        private void ActualizarCarrito()
+        {
+            flpCarrito.SuspendLayout();
+            flpCarrito.Controls.Clear();
+
+            foreach (ItemCarrito item in _carrito)
+            {
+                TarjetaCarrito tarjeta = new TarjetaCarrito(item);
+                tarjeta.CambiarCantidad += TarjetaCarrito_CambiarCantidad;
+                tarjeta.Quitar += TarjetaCarrito_Quitar;
+                flpCarrito.Controls.Add(tarjeta);
+            }
+
+            flpCarrito.ResumeLayout();
+
+            lblCarritoVacio.Visible = _carrito.Count == 0;
+            if (_carrito.Count == 0) lblCarritoVacio.BringToFront();
+
+            decimal total = _carrito.Sum(i => i.Subtotal);
+            lblTotalVenta.Text = "C$ " + total.ToString("0.00");
+            btnRegistrarVenta.Enabled = _carrito.Count > 0;
+        }
+
+        private void TarjetaProducto_Agregar(Producto producto)
+        {
+            if (producto == null) return;
+
+            if (producto.Cantidad <= 0)
+            {
+                AvisoVentas("«" + producto.Nombre + "» está agotado.", true);
+                return;
+            }
+
+            ItemCarrito item = _carrito.FirstOrDefault(i => i.Producto.Id == producto.Id);
+            if (item == null)
+            {
+                _carrito.Add(new ItemCarrito { Producto = producto, Cantidad = 1 });
+            }
+            else
+            {
+                if (item.Cantidad + 1 > producto.Cantidad)
+                {
+                    AvisoVentas("Stock insuficiente: solo quedan " + producto.Cantidad +
+                                " unidades de «" + producto.Nombre + "».", true);
+                    return;
+                }
+                item.Cantidad++;
+            }
+
+            ActualizarCarrito();
+        }
+
+        private void TarjetaCarrito_CambiarCantidad(TarjetaCarrito tarjeta, int delta)
+        {
+            if (tarjeta == null || tarjeta.Item == null) return;
+
+            ItemCarrito item = tarjeta.Item;
+            if (delta > 0)
+            {
+                Producto actual = _productos.FirstOrDefault(p => p.Id == item.Producto.Id);
+                int stock = actual == null ? item.Producto.Cantidad : actual.Cantidad;
+                if (item.Cantidad + delta > stock)
+                {
+                    AvisoVentas("Stock insuficiente: solo quedan " + stock +
+                                " unidades de «" + item.Producto.Nombre + "».", true);
+                    return;
+                }
+            }
+
+            item.Cantidad += delta;
+            if (item.Cantidad <= 0) _carrito.Remove(item);
+            ActualizarCarrito();
+        }
+
+        private void TarjetaCarrito_Quitar(TarjetaCarrito tarjeta)
+        {
+            if (tarjeta == null || tarjeta.Item == null) return;
+            _carrito.Remove(tarjeta.Item);
+            ActualizarCarrito();
+        }
+
+        private void cboCategoriaVenta_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!IsHandleCreated || _inicializandoVentas) return;
+            CargarCatalogo();
+        }
+
+        private void btnVaciarCarrito_Click(object sender, EventArgs e)
+        {
+            if (_carrito.Count == 0) return;
+            _carrito.Clear();
+            ActualizarCarrito();
+            AvisoVentas("Carrito vaciado.", false);
+        }
+
+        private void btnRegistrarVenta_Click(object sender, EventArgs e)
+        {
+            if (_carrito.Count == 0)
+            {
+                AvisoVentas("Agrega al menos un producto para registrar la venta.", true);
+                return;
+            }
+
+            decimal total = _carrito.Sum(i => i.Subtotal);
+            int unidades = _carrito.Sum(i => i.Cantidad);
+
+            DialogResult r = MessageBox.Show(this,
+                "¿Registrar la venta de " + unidades + (unidades == 1 ? " unidad" : " unidades") +
+                " por C$ " + total.ToString("0.00") + "?\r\n\r\n" +
+                "Se descontará el stock del inventario. No se guardará un historial de ventas.",
+                "Registrar venta",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2);
+
+            if (r != DialogResult.Yes) return;
+
+            string mensaje;
+            if (ConexionDB.DescontarStock(_carrito, out mensaje))
+            {
+                _carrito.Clear();
+                CargarVentas();
+                AvisoVentas("Venta registrada. Stock actualizado.", false);
+                lblAvisoVentas.ForeColor = Color.FromArgb(4, 113, 122);
+            }
+            else
+            {
+                MessageBox.Show(this, string.IsNullOrEmpty(mensaje) ? "No se pudo registrar la venta." : mensaje,
+                    "Ventas", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -537,107 +682,12 @@ namespace Acuario2
             t.Start();
         }
 
-        private void AnularVenta(Venta v)
+        private void AvisoVentas(string texto, bool error)
         {
-            DialogResult r = MessageBox.Show(this,
-                "¿Desea anular la venta #" + v.Id + " de «" + v.Producto + "»?\r\n" +
-                "Se repondrán " + v.Cantidad + (v.Cantidad == 1 ? " unidad" : " unidades") + " al inventario.",
-                "Anular venta",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2);
-
-            if (r != DialogResult.Yes) return;
-
-            string mensaje;
-            if (ConexionDB.AnularVenta(v.Id, out mensaje))
-            {
-                CargarVentas();
-                lblAvisoVentas.ForeColor = Color.FromArgb(4, 113, 122);
-                lblAvisoVentas.Text = "Venta anulada y stock repuesto.";
-            }
-            else
-            {
-                MessageBox.Show(this, string.IsNullOrEmpty(mensaje) ? "No se pudo anular la venta." : mensaje,
-                    "Ventas", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
-        private void dgvVentas_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-            Venta v = dgvVentas.Rows[e.RowIndex].Tag as Venta;
-            if (v == null) return;
-
-            if (e.ColumnIndex == colVentaAnular.Index) AnularVenta(v);
-        }
-
-        private void dgvVentas_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            if ((e.ColumnIndex == colVentaPrecio.Index || e.ColumnIndex == colVentaTotal.Index) && e.Value is decimal)
-            {
-                e.Value = "$" + ((decimal)e.Value).ToString("N2");
-                e.FormattingApplied = true;
-            }
-            else if (e.ColumnIndex == colVentaFecha.Index && e.Value is DateTime)
-            {
-                e.Value = ((DateTime)e.Value).ToString("dd/MM/yyyy HH:mm");
-                e.FormattingApplied = true;
-            }
-        }
-
-        private void dgvVentas_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex != colVentaAnular.Index) return;
-
-            e.PaintBackground(e.ClipBounds, true);
-
-            bool hover = (_hoverFilaVenta == e.RowIndex && _hoverColumnaVenta == e.ColumnIndex);
-            if (hover)
-            {
-                Rectangle rh = new Rectangle(e.CellBounds.X + 5, e.CellBounds.Y + 6,
-                                             e.CellBounds.Width - 10, e.CellBounds.Height - 12);
-                using (GraphicsPath ruta = UiUtil.RutaRedondeada(rh, 8))
-                using (SolidBrush b = new SolidBrush(Color.FromArgb(253, 237, 235))) e.Graphics.FillPath(b, ruta);
-            }
-
-            Color tinta = hover ? Color.FromArgb(214, 69, 54) : Color.FromArgb(192, 57, 43);
-            TextRenderer.DrawText(e.Graphics, "Anular", UiUtil.Fuente(9.5f, FontStyle.Bold),
-                e.CellBounds, tinta,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
-            e.Handled = true;
-        }
-
-        private void dgvVentas_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (e.RowIndex == _hoverFilaVenta && e.ColumnIndex == _hoverColumnaVenta) return;
-
-            int filaAnt = _hoverFilaVenta;
-            int colAnt = _hoverColumnaVenta;
-            _hoverFilaVenta = e.RowIndex;
-            _hoverColumnaVenta = e.ColumnIndex;
-
-            bool eraBoton = EsColumnaBotonVenta(colAnt);
-            bool esBoton = EsColumnaBotonVenta(_hoverColumnaVenta);
-
-            if (eraBoton && filaAnt >= 0) dgvVentas.InvalidateCell(colAnt, filaAnt);
-            if (esBoton && _hoverFilaVenta >= 0) dgvVentas.InvalidateCell(_hoverColumnaVenta, _hoverFilaVenta);
-        }
-
-        private void dgvVentas_CellLeave(object sender, DataGridViewCellEventArgs e)
-        {
-            int filaAnt = _hoverFilaVenta;
-            int colAnt = _hoverColumnaVenta;
-            _hoverFilaVenta = -1;
-            _hoverColumnaVenta = -1;
-            if (EsColumnaBotonVenta(colAnt) && filaAnt >= 0) dgvVentas.InvalidateCell(colAnt, filaAnt);
-        }
-
-        private bool EsColumnaBotonVenta(int indice)
-        {
-            return indice >= 0 && indice == colVentaAnular.Index;
+            lblAvisoVentas.ForeColor = error
+                ? Color.FromArgb(192, 57, 43)
+                : Color.FromArgb(95, 115, 135);
+            lblAvisoVentas.Text = texto;
         }
 
         // ============================================================

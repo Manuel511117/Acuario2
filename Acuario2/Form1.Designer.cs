@@ -34,13 +34,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panLateral = new System.Windows.Forms.Panel();
             this.btnSalir = new System.Windows.Forms.Button();
             this.btnConfig = new System.Windows.Forms.Button();
@@ -60,6 +53,7 @@
             this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colEspecie = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colCategoriaProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colPrecio = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colVer = new System.Windows.Forms.DataGridViewImageColumn();
@@ -70,24 +64,23 @@
             this.btnActualizar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.panVentas = new System.Windows.Forms.Panel();
-            this.dgvVentas = new System.Windows.Forms.DataGridView();
-            this.colVentaId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaProducto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaCategoria = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaCantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaPrecio = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaTotal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaFecha = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colVentaAnular = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.lblAvisoVentas = new System.Windows.Forms.Label();
-            this.btnNuevaVenta = new System.Windows.Forms.Button();
-            this.btnActualizarVentas = new System.Windows.Forms.Button();
             this.panFiltroVentas = new Acuario2.PanelRedondeado();
-            this.cboFiltroVenta = new System.Windows.Forms.ComboBox();
-            this.picFiltroVenta = new System.Windows.Forms.PictureBox();
-            this.panBuscadorVentas = new Acuario2.PanelRedondeado();
-            this.txtBuscarVenta = new System.Windows.Forms.TextBox();
-            this.picLupaVenta = new System.Windows.Forms.PictureBox();
+            this.lblCategoriaVenta = new System.Windows.Forms.Label();
+            this.cboCategoriaVenta = new System.Windows.Forms.ComboBox();
+            this.lblAvisoVentas = new System.Windows.Forms.Label();
+            this.btnActualizarVentas = new System.Windows.Forms.Button();
+            this.panCatalogo = new Acuario2.PanelRedondeado();
+            this.lblCatalogoTitulo = new System.Windows.Forms.Label();
+            this.flpCatalogo = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblCatalogoVacio = new System.Windows.Forms.Label();
+            this.panCarrito = new Acuario2.PanelRedondeado();
+            this.lblCarritoTitulo = new System.Windows.Forms.Label();
+            this.flpCarrito = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblCarritoVacio = new System.Windows.Forms.Label();
+            this.lblTotalVentas = new System.Windows.Forms.Label();
+            this.lblTotalVenta = new System.Windows.Forms.Label();
+            this.btnVaciarCarrito = new System.Windows.Forms.Button();
+            this.btnRegistrarVenta = new System.Windows.Forms.Button();
             this.panValor = new Acuario2.PanelRedondeado();
             this.grafValor = new Acuario2.GraficaBarras();
             this.lblValorTitulo = new System.Windows.Forms.Label();
@@ -135,11 +128,9 @@
             this.panInventario.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.panVentas.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvVentas)).BeginInit();
             this.panFiltroVentas.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFiltroVenta)).BeginInit();
-            this.panBuscadorVentas.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLupaVenta)).BeginInit();
+            this.panCatalogo.SuspendLayout();
+            this.panCarrito.SuspendLayout();
             this.panValor.SuspendLayout();
             this.panTop5.SuspendLayout();
             this.panAlertas.SuspendLayout();
@@ -422,141 +413,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panVentas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
-            this.panVentas.Controls.Add(this.dgvVentas);
-            this.panVentas.Controls.Add(this.lblAvisoVentas);
-            this.panVentas.Controls.Add(this.btnActualizarVentas);
-            this.panVentas.Controls.Add(this.btnNuevaVenta);
             this.panVentas.Controls.Add(this.panFiltroVentas);
-            this.panVentas.Controls.Add(this.panBuscadorVentas);
+            this.panVentas.Controls.Add(this.panCatalogo);
+            this.panVentas.Controls.Add(this.panCarrito);
             this.panVentas.Location = new System.Drawing.Point(0, 0);
             this.panVentas.Name = "panVentas";
             this.panVentas.Size = new System.Drawing.Size(1020, 541);
             this.panVentas.TabIndex = 2;
             this.panVentas.Visible = false;
-            // 
-            // dgvVentas
-            // 
-            this.dgvVentas.AllowUserToAddRows = false;
-            this.dgvVentas.AllowUserToDeleteRows = false;
-            this.dgvVentas.AllowUserToResizeColumns = false;
-            this.dgvVentas.AllowUserToResizeRows = false;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(244)))), ((int)(((byte)(247)))));
-            this.dgvVentas.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
-            this.dgvVentas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvVentas.BackgroundColor = System.Drawing.Color.White;
-            this.dgvVentas.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvVentas.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dgvVentas.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(46)))), ((int)(((byte)(81)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvVentas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.dgvVentas.ColumnHeadersHeight = 48;
-            this.dgvVentas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dgvVentas.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colVentaId,
-            this.colVentaProducto,
-            this.colVentaCategoria,
-            this.colVentaCantidad,
-            this.colVentaPrecio,
-            this.colVentaTotal,
-            this.colVentaFecha,
-            this.colVentaAnular});
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Segoe UI", 10F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(238)))), ((int)(((byte)(243)))));
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvVentas.DefaultCellStyle = dataGridViewCellStyle9;
-            this.dgvVentas.EnableHeadersVisualStyles = false;
-            this.dgvVentas.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(233)))), ((int)(((byte)(239)))), ((int)(((byte)(244)))));
-            this.dgvVentas.Location = new System.Drawing.Point(22, 142);
-            this.dgvVentas.MultiSelect = false;
-            this.dgvVentas.Name = "dgvVentas";
-            this.dgvVentas.ReadOnly = true;
-            this.dgvVentas.RowHeadersVisible = false;
-            this.dgvVentas.RowTemplate.Height = 44;
-            this.dgvVentas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dgvVentas.Size = new System.Drawing.Size(976, 377);
-            this.dgvVentas.TabIndex = 5;
-            this.dgvVentas.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVentas_CellClick);
-            this.dgvVentas.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvVentas_CellFormatting);
-            this.dgvVentas.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVentas_CellLeave);
-            this.dgvVentas.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvVentas_CellMouseMove);
-            this.dgvVentas.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvVentas_CellPainting);
-            // 
-            // colVentaId
-            // 
-            this.colVentaId.HeaderText = "ID";
-            this.colVentaId.Name = "colVentaId";
-            this.colVentaId.ReadOnly = true;
-            this.colVentaId.Width = 50;
-            // 
-            // colVentaProducto
-            // 
-            this.colVentaProducto.HeaderText = "Producto";
-            this.colVentaProducto.Name = "colVentaProducto";
-            this.colVentaProducto.ReadOnly = true;
-            this.colVentaProducto.Width = 280;
-            // 
-            // colVentaCategoria
-            // 
-            this.colVentaCategoria.HeaderText = "Categoría";
-            this.colVentaCategoria.Name = "colVentaCategoria";
-            this.colVentaCategoria.ReadOnly = true;
-            this.colVentaCategoria.Width = 140;
-            // 
-            // colVentaCantidad
-            // 
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.colVentaCantidad.DefaultCellStyle = dataGridViewCellStyle10;
-            this.colVentaCantidad.HeaderText = "Cantidad";
-            this.colVentaCantidad.Name = "colVentaCantidad";
-            this.colVentaCantidad.ReadOnly = true;
-            this.colVentaCantidad.Width = 80;
-            // 
-            // colVentaPrecio
-            // 
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.colVentaPrecio.DefaultCellStyle = dataGridViewCellStyle11;
-            this.colVentaPrecio.HeaderText = "Precio";
-            this.colVentaPrecio.Name = "colVentaPrecio";
-            this.colVentaPrecio.ReadOnly = true;
-            this.colVentaPrecio.Width = 95;
-            // 
-            // colVentaTotal
-            // 
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.colVentaTotal.DefaultCellStyle = dataGridViewCellStyle12;
-            this.colVentaTotal.HeaderText = "Total";
-            this.colVentaTotal.Name = "colVentaTotal";
-            this.colVentaTotal.ReadOnly = true;
-            this.colVentaTotal.Width = 95;
-            // 
-            // colVentaFecha
-            // 
-            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.colVentaFecha.DefaultCellStyle = dataGridViewCellStyle13;
-            this.colVentaFecha.HeaderText = "Fecha";
-            this.colVentaFecha.Name = "colVentaFecha";
-            this.colVentaFecha.ReadOnly = true;
-            this.colVentaFecha.Width = 130;
-            // 
-            // colVentaAnular
-            // 
-            this.colVentaAnular.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colVentaAnular.HeaderText = "Anular";
-            this.colVentaAnular.Name = "colVentaAnular";
-            this.colVentaAnular.ReadOnly = true;
-            this.colVentaAnular.Width = 90;
             // 
             // dgvProductos
             // 
@@ -587,6 +451,7 @@
             this.colId,
             this.colNombre,
             this.colEspecie,
+            this.colCategoriaProducto,
             this.colCantidad,
             this.colPrecio,
             this.colVer,
@@ -630,14 +495,21 @@
             this.colNombre.HeaderText = "Nombre";
             this.colNombre.Name = "colNombre";
             this.colNombre.ReadOnly = true;
-            this.colNombre.Width = 200;
+            this.colNombre.Width = 170;
             // 
             // colEspecie
             // 
             this.colEspecie.HeaderText = "Especie";
             this.colEspecie.Name = "colEspecie";
             this.colEspecie.ReadOnly = true;
-            this.colEspecie.Width = 120;
+            this.colEspecie.Width = 105;
+            // 
+            // colCategoriaProducto
+            // 
+            this.colCategoriaProducto.HeaderText = "Categoría";
+            this.colCategoriaProducto.Name = "colCategoriaProducto";
+            this.colCategoriaProducto.ReadOnly = true;
+            this.colCategoriaProducto.Width = 115;
             // 
             // colCantidad
             // 
@@ -646,7 +518,7 @@
             this.colCantidad.HeaderText = "Cantidad";
             this.colCantidad.Name = "colCantidad";
             this.colCantidad.ReadOnly = true;
-            this.colCantidad.Width = 85;
+            this.colCantidad.Width = 78;
             // 
             // colPrecio
             // 
@@ -662,7 +534,7 @@
             this.colVer.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
             this.colVer.Name = "colVer";
             this.colVer.ReadOnly = true;
-            this.colVer.Width = 72;
+            this.colVer.Width = 60;
             // 
             // colEstado
             // 
@@ -671,7 +543,7 @@
             this.colEstado.HeaderText = "Estado";
             this.colEstado.Name = "colEstado";
             this.colEstado.ReadOnly = true;
-            this.colEstado.Width = 120;
+            this.colEstado.Width = 100;
             // 
             // colEditar
             // 
@@ -679,7 +551,7 @@
             this.colEditar.HeaderText = "Editar";
             this.colEditar.Name = "colEditar";
             this.colEditar.ReadOnly = true;
-            this.colEditar.Width = 92;
+            this.colEditar.Width = 84;
             // 
             // colEliminar
             // 
@@ -687,7 +559,7 @@
             this.colEliminar.HeaderText = "Eliminar";
             this.colEliminar.Name = "colEliminar";
             this.colEliminar.ReadOnly = true;
-            this.colEliminar.Width = 98;
+            this.colEliminar.Width = 88;
             // 
             // lblAviso
             // 
@@ -742,36 +614,58 @@
             this.btnAgregar.UseVisualStyleBackColor = false;
             this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
             // 
+            // panFiltroVentas
+            // 
+            this.panFiltroVentas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panFiltroVentas.BackColor = System.Drawing.Color.White;
+            this.panFiltroVentas.ColorBorde = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(235)))), ((int)(((byte)(242)))));
+            this.panFiltroVentas.Controls.Add(this.lblCategoriaVenta);
+            this.panFiltroVentas.Controls.Add(this.cboCategoriaVenta);
+            this.panFiltroVentas.Controls.Add(this.lblAvisoVentas);
+            this.panFiltroVentas.Controls.Add(this.btnActualizarVentas);
+            this.panFiltroVentas.Location = new System.Drawing.Point(22, 18);
+            this.panFiltroVentas.Name = "panFiltroVentas";
+            this.panFiltroVentas.Radio = 16;
+            this.panFiltroVentas.Size = new System.Drawing.Size(976, 56);
+            this.panFiltroVentas.TabIndex = 0;
+            // 
+            // lblCategoriaVenta
+            // 
+            this.lblCategoriaVenta.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
+            this.lblCategoriaVenta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblCategoriaVenta.Location = new System.Drawing.Point(18, 16);
+            this.lblCategoriaVenta.Name = "lblCategoriaVenta";
+            this.lblCategoriaVenta.Size = new System.Drawing.Size(86, 24);
+            this.lblCategoriaVenta.TabIndex = 0;
+            this.lblCategoriaVenta.Text = "Categoría:";
+            this.lblCategoriaVenta.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cboCategoriaVenta
+            // 
+            this.cboCategoriaVenta.BackColor = System.Drawing.Color.White;
+            this.cboCategoriaVenta.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboCategoriaVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cboCategoriaVenta.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            this.cboCategoriaVenta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.cboCategoriaVenta.FormattingEnabled = true;
+            this.cboCategoriaVenta.Location = new System.Drawing.Point(110, 13);
+            this.cboCategoriaVenta.Name = "cboCategoriaVenta";
+            this.cboCategoriaVenta.Size = new System.Drawing.Size(240, 27);
+            this.cboCategoriaVenta.TabIndex = 1;
+            this.cboCategoriaVenta.SelectedIndexChanged += new System.EventHandler(this.cboCategoriaVenta_SelectedIndexChanged);
+            // 
             // lblAvisoVentas
             // 
-            this.lblAvisoVentas.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            this.lblAvisoVentas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblAvisoVentas.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblAvisoVentas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(115)))), ((int)(((byte)(135)))));
-            this.lblAvisoVentas.Location = new System.Drawing.Point(250, 78);
+            this.lblAvisoVentas.Location = new System.Drawing.Point(366, 8);
             this.lblAvisoVentas.Name = "lblAvisoVentas";
-            this.lblAvisoVentas.Size = new System.Drawing.Size(520, 48);
-            this.lblAvisoVentas.TabIndex = 4;
+            this.lblAvisoVentas.Size = new System.Drawing.Size(420, 40);
+            this.lblAvisoVentas.TabIndex = 2;
             this.lblAvisoVentas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // btnNuevaVenta
-            // 
-            this.btnNuevaVenta.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(175)))), ((int)(((byte)(182)))));
-            this.btnNuevaVenta.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnNuevaVenta.FlatAppearance.BorderSize = 0;
-            this.btnNuevaVenta.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(143)))), ((int)(((byte)(149)))));
-            this.btnNuevaVenta.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(199)))), ((int)(((byte)(207)))));
-            this.btnNuevaVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNuevaVenta.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
-            this.btnNuevaVenta.ForeColor = System.Drawing.Color.White;
-            this.btnNuevaVenta.Location = new System.Drawing.Point(22, 78);
-            this.btnNuevaVenta.Name = "btnNuevaVenta";
-            this.btnNuevaVenta.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
-            this.btnNuevaVenta.Size = new System.Drawing.Size(210, 48);
-            this.btnNuevaVenta.TabIndex = 2;
-            this.btnNuevaVenta.TabStop = false;
-            this.btnNuevaVenta.Text = "Nueva venta";
-            this.btnNuevaVenta.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnNuevaVenta.UseVisualStyleBackColor = false;
-            this.btnNuevaVenta.Click += new System.EventHandler(this.btnNuevaVenta_Click);
             // 
             // btnActualizarVentas
             // 
@@ -782,90 +676,191 @@
             this.btnActualizarVentas.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(32)))), ((int)(((byte)(59)))));
             this.btnActualizarVentas.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(62)))), ((int)(((byte)(111)))));
             this.btnActualizarVentas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnActualizarVentas.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
+            this.btnActualizarVentas.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnActualizarVentas.ForeColor = System.Drawing.Color.White;
-            this.btnActualizarVentas.Location = new System.Drawing.Point(788, 78);
+            this.btnActualizarVentas.Location = new System.Drawing.Point(800, 10);
             this.btnActualizarVentas.Name = "btnActualizarVentas";
-            this.btnActualizarVentas.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
-            this.btnActualizarVentas.Size = new System.Drawing.Size(210, 48);
+            this.btnActualizarVentas.Size = new System.Drawing.Size(158, 36);
             this.btnActualizarVentas.TabIndex = 3;
             this.btnActualizarVentas.TabStop = false;
             this.btnActualizarVentas.Text = "Actualizar";
-            this.btnActualizarVentas.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnActualizarVentas.UseVisualStyleBackColor = false;
             this.btnActualizarVentas.Click += new System.EventHandler(this.btnActualizarVentas_Click);
             // 
-            // panFiltroVentas
+            // panCatalogo
             // 
-            this.panFiltroVentas.BackColor = System.Drawing.Color.White;
-            this.panFiltroVentas.Controls.Add(this.cboFiltroVenta);
-            this.panFiltroVentas.Controls.Add(this.picFiltroVenta);
-            this.panFiltroVentas.Location = new System.Drawing.Point(468, 20);
-            this.panFiltroVentas.Name = "panFiltroVentas";
-            this.panFiltroVentas.Size = new System.Drawing.Size(300, 44);
-            this.panFiltroVentas.TabIndex = 1;
-            // 
-            // cboFiltroVenta
-            // 
-            this.cboFiltroVenta.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panCatalogo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cboFiltroVenta.BackColor = System.Drawing.Color.White;
-            this.cboFiltroVenta.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboFiltroVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cboFiltroVenta.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            this.cboFiltroVenta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
-            this.cboFiltroVenta.FormattingEnabled = true;
-            this.cboFiltroVenta.Location = new System.Drawing.Point(44, 7);
-            this.cboFiltroVenta.Name = "cboFiltroVenta";
-            this.cboFiltroVenta.Size = new System.Drawing.Size(246, 27);
-            this.cboFiltroVenta.TabIndex = 1;
-            this.cboFiltroVenta.SelectedIndexChanged += new System.EventHandler(this.cboFiltroVenta_SelectedIndexChanged);
+            this.panCatalogo.BackColor = System.Drawing.Color.White;
+            this.panCatalogo.ColorBorde = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(235)))), ((int)(((byte)(242)))));
+            this.panCatalogo.Controls.Add(this.flpCatalogo);
+            this.panCatalogo.Controls.Add(this.lblCatalogoVacio);
+            this.panCatalogo.Controls.Add(this.lblCatalogoTitulo);
+            this.panCatalogo.Location = new System.Drawing.Point(22, 88);
+            this.panCatalogo.Name = "panCatalogo";
+            this.panCatalogo.Radio = 16;
+            this.panCatalogo.Size = new System.Drawing.Size(636, 433);
+            this.panCatalogo.TabIndex = 1;
             // 
-            // picFiltroVenta
+            // lblCatalogoTitulo
             // 
-            this.picFiltroVenta.BackColor = System.Drawing.Color.Transparent;
-            this.picFiltroVenta.Location = new System.Drawing.Point(16, 12);
-            this.picFiltroVenta.Name = "picFiltroVenta";
-            this.picFiltroVenta.Size = new System.Drawing.Size(20, 20);
-            this.picFiltroVenta.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picFiltroVenta.TabIndex = 0;
-            this.picFiltroVenta.TabStop = false;
+            this.lblCatalogoTitulo.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblCatalogoTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblCatalogoTitulo.Location = new System.Drawing.Point(16, 12);
+            this.lblCatalogoTitulo.Name = "lblCatalogoTitulo";
+            this.lblCatalogoTitulo.Size = new System.Drawing.Size(300, 24);
+            this.lblCatalogoTitulo.TabIndex = 0;
+            this.lblCatalogoTitulo.Text = "Productos";
             // 
-            // panBuscadorVentas
+            // flpCatalogo
             // 
-            this.panBuscadorVentas.BackColor = System.Drawing.Color.White;
-            this.panBuscadorVentas.Controls.Add(this.txtBuscarVenta);
-            this.panBuscadorVentas.Controls.Add(this.picLupaVenta);
-            this.panBuscadorVentas.Location = new System.Drawing.Point(22, 20);
-            this.panBuscadorVentas.Name = "panBuscadorVentas";
-            this.panBuscadorVentas.Size = new System.Drawing.Size(430, 44);
-            this.panBuscadorVentas.TabIndex = 0;
-            // 
-            // txtBuscarVenta
-            // 
-            this.txtBuscarVenta.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.flpCatalogo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBuscarVenta.BackColor = System.Drawing.Color.White;
-            this.txtBuscarVenta.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtBuscarVenta.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtBuscarVenta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
-            this.txtBuscarVenta.Location = new System.Drawing.Point(44, 10);
-            this.txtBuscarVenta.Name = "txtBuscarVenta";
-            this.txtBuscarVenta.Size = new System.Drawing.Size(374, 20);
-            this.txtBuscarVenta.TabIndex = 1;
-            this.txtBuscarVenta.TextChanged += new System.EventHandler(this.txtBuscarVenta_TextChanged);
-            this.txtBuscarVenta.Enter += new System.EventHandler(this.txtBuscarVenta_Enter);
-            this.txtBuscarVenta.Leave += new System.EventHandler(this.txtBuscarVenta_Leave);
+            this.flpCatalogo.AutoScroll = true;
+            this.flpCatalogo.BackColor = System.Drawing.Color.White;
+            this.flpCatalogo.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
+            this.flpCatalogo.Location = new System.Drawing.Point(12, 44);
+            this.flpCatalogo.Name = "flpCatalogo";
+            this.flpCatalogo.Size = new System.Drawing.Size(612, 377);
+            this.flpCatalogo.TabIndex = 1;
+            this.flpCatalogo.WrapContents = true;
             // 
-            // picLupaVenta
+            // lblCatalogoVacio
             // 
-            this.picLupaVenta.BackColor = System.Drawing.Color.Transparent;
-            this.picLupaVenta.Location = new System.Drawing.Point(16, 12);
-            this.picLupaVenta.Name = "picLupaVenta";
-            this.picLupaVenta.Size = new System.Drawing.Size(20, 20);
-            this.picLupaVenta.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLupaVenta.TabIndex = 0;
-            this.picLupaVenta.TabStop = false;
+            this.lblCatalogoVacio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCatalogoVacio.BackColor = System.Drawing.Color.White;
+            this.lblCatalogoVacio.Font = new System.Drawing.Font("Segoe UI", 10.5F);
+            this.lblCatalogoVacio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(130)))), ((int)(((byte)(145)))));
+            this.lblCatalogoVacio.Location = new System.Drawing.Point(16, 44);
+            this.lblCatalogoVacio.Name = "lblCatalogoVacio";
+            this.lblCatalogoVacio.Size = new System.Drawing.Size(604, 90);
+            this.lblCatalogoVacio.TabIndex = 2;
+            this.lblCatalogoVacio.Text = "No hay productos en esta categoría.";
+            this.lblCatalogoVacio.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblCatalogoVacio.Visible = false;
+            // 
+            // panCarrito
+            // 
+            this.panCarrito.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panCarrito.BackColor = System.Drawing.Color.White;
+            this.panCarrito.ColorBorde = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(235)))), ((int)(((byte)(242)))));
+            this.panCarrito.Controls.Add(this.lblTotalVenta);
+            this.panCarrito.Controls.Add(this.lblTotalVentas);
+            this.panCarrito.Controls.Add(this.btnVaciarCarrito);
+            this.panCarrito.Controls.Add(this.btnRegistrarVenta);
+            this.panCarrito.Controls.Add(this.lblCarritoVacio);
+            this.panCarrito.Controls.Add(this.flpCarrito);
+            this.panCarrito.Controls.Add(this.lblCarritoTitulo);
+            this.panCarrito.Location = new System.Drawing.Point(668, 88);
+            this.panCarrito.Name = "panCarrito";
+            this.panCarrito.Radio = 16;
+            this.panCarrito.Size = new System.Drawing.Size(330, 433);
+            this.panCarrito.TabIndex = 2;
+            // 
+            // lblCarritoTitulo
+            // 
+            this.lblCarritoTitulo.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblCarritoTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblCarritoTitulo.Location = new System.Drawing.Point(16, 12);
+            this.lblCarritoTitulo.Name = "lblCarritoTitulo";
+            this.lblCarritoTitulo.Size = new System.Drawing.Size(200, 24);
+            this.lblCarritoTitulo.TabIndex = 0;
+            this.lblCarritoTitulo.Text = "Carrito";
+            // 
+            // flpCarrito
+            // 
+            this.flpCarrito.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flpCarrito.AutoScroll = true;
+            this.flpCarrito.BackColor = System.Drawing.Color.White;
+            this.flpCarrito.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flpCarrito.Location = new System.Drawing.Point(8, 44);
+            this.flpCarrito.Name = "flpCarrito";
+            this.flpCarrito.Size = new System.Drawing.Size(314, 282);
+            this.flpCarrito.TabIndex = 1;
+            this.flpCarrito.WrapContents = false;
+            // 
+            // lblCarritoVacio
+            // 
+            this.lblCarritoVacio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCarritoVacio.BackColor = System.Drawing.Color.White;
+            this.lblCarritoVacio.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.lblCarritoVacio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(130)))), ((int)(((byte)(145)))));
+            this.lblCarritoVacio.Location = new System.Drawing.Point(16, 52);
+            this.lblCarritoVacio.Name = "lblCarritoVacio";
+            this.lblCarritoVacio.Size = new System.Drawing.Size(298, 60);
+            this.lblCarritoVacio.TabIndex = 2;
+            this.lblCarritoVacio.Text = "Agrega productos del catálogo para iniciar la venta.";
+            this.lblCarritoVacio.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblTotalVentas
+            // 
+            this.lblTotalVentas.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblTotalVentas.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTotalVentas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(64)))), ((int)(((byte)(95)))));
+            this.lblTotalVentas.Location = new System.Drawing.Point(16, 334);
+            this.lblTotalVentas.Name = "lblTotalVentas";
+            this.lblTotalVentas.Size = new System.Drawing.Size(110, 28);
+            this.lblTotalVentas.TabIndex = 3;
+            this.lblTotalVentas.Text = "Total:";
+            this.lblTotalVentas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblTotalVenta
+            // 
+            this.lblTotalVenta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTotalVenta.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
+            this.lblTotalVenta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(14)))), ((int)(((byte)(124)))), ((int)(((byte)(134)))));
+            this.lblTotalVenta.Location = new System.Drawing.Point(130, 331);
+            this.lblTotalVenta.Name = "lblTotalVenta";
+            this.lblTotalVenta.Size = new System.Drawing.Size(184, 30);
+            this.lblTotalVenta.TabIndex = 4;
+            this.lblTotalVenta.Text = "C$ 0.00";
+            this.lblTotalVenta.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btnVaciarCarrito
+            // 
+            this.btnVaciarCarrito.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnVaciarCarrito.BackColor = System.Drawing.Color.White;
+            this.btnVaciarCarrito.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnVaciarCarrito.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(206)))), ((int)(((byte)(218)))), ((int)(((byte)(226)))));
+            this.btnVaciarCarrito.FlatAppearance.BorderSize = 1;
+            this.btnVaciarCarrito.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(241)))), ((int)(((byte)(245)))));
+            this.btnVaciarCarrito.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(249)))), ((int)(((byte)(251)))));
+            this.btnVaciarCarrito.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnVaciarCarrito.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnVaciarCarrito.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(50)))), ((int)(((byte)(90)))));
+            this.btnVaciarCarrito.Location = new System.Drawing.Point(16, 372);
+            this.btnVaciarCarrito.Name = "btnVaciarCarrito";
+            this.btnVaciarCarrito.Size = new System.Drawing.Size(140, 40);
+            this.btnVaciarCarrito.TabIndex = 5;
+            this.btnVaciarCarrito.Text = "Vaciar carrito";
+            this.btnVaciarCarrito.UseVisualStyleBackColor = false;
+            this.btnVaciarCarrito.Click += new System.EventHandler(this.btnVaciarCarrito_Click);
+            // 
+            // btnRegistrarVenta
+            // 
+            this.btnRegistrarVenta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRegistrarVenta.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(175)))), ((int)(((byte)(182)))));
+            this.btnRegistrarVenta.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRegistrarVenta.FlatAppearance.BorderSize = 0;
+            this.btnRegistrarVenta.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(3)))), ((int)(((byte)(143)))), ((int)(((byte)(149)))));
+            this.btnRegistrarVenta.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(199)))), ((int)(((byte)(207)))));
+            this.btnRegistrarVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRegistrarVenta.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnRegistrarVenta.ForeColor = System.Drawing.Color.White;
+            this.btnRegistrarVenta.Location = new System.Drawing.Point(166, 372);
+            this.btnRegistrarVenta.Name = "btnRegistrarVenta";
+            this.btnRegistrarVenta.Size = new System.Drawing.Size(148, 40);
+            this.btnRegistrarVenta.TabIndex = 6;
+            this.btnRegistrarVenta.Text = "Registrar venta";
+            this.btnRegistrarVenta.UseVisualStyleBackColor = false;
+            this.btnRegistrarVenta.Click += new System.EventHandler(this.btnRegistrarVenta_Click);
             // 
             // panValor
             // 
@@ -1326,12 +1321,12 @@
             this.panInventario.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).EndInit();
             this.panVentas.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvVentas)).EndInit();
             this.panFiltroVentas.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picFiltroVenta)).EndInit();
-            this.panBuscadorVentas.ResumeLayout(false);
-            this.panBuscadorVentas.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLupaVenta)).EndInit();
+            this.panFiltroVentas.PerformLayout();
+            this.panCatalogo.ResumeLayout(false);
+            this.panCatalogo.PerformLayout();
+            this.panCarrito.ResumeLayout(false);
+            this.panCarrito.PerformLayout();
             this.panValor.ResumeLayout(false);
             this.panTop5.ResumeLayout(false);
             this.panAlertas.ResumeLayout(false);
@@ -1415,6 +1410,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colId;
         private System.Windows.Forms.DataGridViewTextBoxColumn colNombre;
         private System.Windows.Forms.DataGridViewTextBoxColumn colEspecie;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCategoriaProducto;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCantidad;
         private System.Windows.Forms.DataGridViewTextBoxColumn colPrecio;
         private System.Windows.Forms.DataGridViewImageColumn colVer;
@@ -1422,23 +1418,22 @@
         private System.Windows.Forms.DataGridViewButtonColumn colEditar;
         private System.Windows.Forms.DataGridViewButtonColumn colEliminar;
         private System.Windows.Forms.Panel panVentas;
-        private System.Windows.Forms.DataGridView dgvVentas;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaProducto;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaCategoria;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaCantidad;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaPrecio;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaTotal;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colVentaFecha;
-        private System.Windows.Forms.DataGridViewButtonColumn colVentaAnular;
-        private System.Windows.Forms.Label lblAvisoVentas;
-        private System.Windows.Forms.Button btnNuevaVenta;
-        private System.Windows.Forms.Button btnActualizarVentas;
         private Acuario2.PanelRedondeado panFiltroVentas;
-        private System.Windows.Forms.ComboBox cboFiltroVenta;
-        private System.Windows.Forms.PictureBox picFiltroVenta;
-        private Acuario2.PanelRedondeado panBuscadorVentas;
-        private System.Windows.Forms.TextBox txtBuscarVenta;
-        private System.Windows.Forms.PictureBox picLupaVenta;
+        private System.Windows.Forms.Label lblCategoriaVenta;
+        private System.Windows.Forms.ComboBox cboCategoriaVenta;
+        private System.Windows.Forms.Label lblAvisoVentas;
+        private System.Windows.Forms.Button btnActualizarVentas;
+        private Acuario2.PanelRedondeado panCatalogo;
+        private System.Windows.Forms.Label lblCatalogoTitulo;
+        private System.Windows.Forms.FlowLayoutPanel flpCatalogo;
+        private System.Windows.Forms.Label lblCatalogoVacio;
+        private Acuario2.PanelRedondeado panCarrito;
+        private System.Windows.Forms.Label lblCarritoTitulo;
+        private System.Windows.Forms.FlowLayoutPanel flpCarrito;
+        private System.Windows.Forms.Label lblCarritoVacio;
+        private System.Windows.Forms.Label lblTotalVentas;
+        private System.Windows.Forms.Label lblTotalVenta;
+        private System.Windows.Forms.Button btnVaciarCarrito;
+        private System.Windows.Forms.Button btnRegistrarVenta;
     }
 }
