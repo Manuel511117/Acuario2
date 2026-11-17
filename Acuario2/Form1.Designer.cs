@@ -64,6 +64,8 @@
             this.btnActualizar = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.panVentas = new System.Windows.Forms.Panel();
+            this.panReportes = new System.Windows.Forms.Panel();
+            this.panConfig = new System.Windows.Forms.Panel();
             this.panFiltroVentas = new Acuario2.PanelRedondeado();
             this.lblCategoriaVenta = new System.Windows.Forms.Label();
             this.cboCategoriaVenta = new System.Windows.Forms.ComboBox();
@@ -128,6 +130,8 @@
             this.panInventario.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).BeginInit();
             this.panVentas.SuspendLayout();
+            this.panReportes.SuspendLayout();
+            this.panConfig.SuspendLayout();
             this.panFiltroVentas.SuspendLayout();
             this.panCatalogo.SuspendLayout();
             this.panCarrito.SuspendLayout();
@@ -365,6 +369,8 @@
             this.panContenido.Controls.Add(this.panDashboard);
             this.panContenido.Controls.Add(this.panInventario);
             this.panContenido.Controls.Add(this.panVentas);
+            this.panContenido.Controls.Add(this.panReportes);
+            this.panContenido.Controls.Add(this.panConfig);
             this.panContenido.Location = new System.Drawing.Point(260, 108);
             this.panContenido.Name = "panContenido";
             this.panContenido.Size = new System.Drawing.Size(1020, 541);
@@ -421,6 +427,30 @@
             this.panVentas.Size = new System.Drawing.Size(1020, 541);
             this.panVentas.TabIndex = 2;
             this.panVentas.Visible = false;
+            // 
+            // panReportes
+            // 
+            this.panReportes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panReportes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
+            this.panReportes.Location = new System.Drawing.Point(0, 0);
+            this.panReportes.Name = "panReportes";
+            this.panReportes.Size = new System.Drawing.Size(1020, 541);
+            this.panReportes.TabIndex = 3;
+            this.panReportes.Visible = false;
+            // 
+            // panConfig
+            // 
+            this.panConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panConfig.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
+            this.panConfig.Location = new System.Drawing.Point(0, 0);
+            this.panConfig.Name = "panConfig";
+            this.panConfig.Size = new System.Drawing.Size(1020, 541);
+            this.panConfig.TabIndex = 4;
+            this.panConfig.Visible = false;
             // 
             // dgvProductos
             // 
@@ -1322,6 +1352,8 @@
             this.panInventario.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProductos)).EndInit();
             this.panVentas.ResumeLayout(false);
+            this.panReportes.ResumeLayout(false);
+            this.panConfig.ResumeLayout(false);
             this.panFiltroVentas.ResumeLayout(false);
             this.panFiltroVentas.PerformLayout();
             this.panCatalogo.ResumeLayout(false);
@@ -1419,6 +1451,8 @@
         private System.Windows.Forms.DataGridViewButtonColumn colEditar;
         private System.Windows.Forms.DataGridViewButtonColumn colEliminar;
         private System.Windows.Forms.Panel panVentas;
+        private System.Windows.Forms.Panel panReportes;
+        private System.Windows.Forms.Panel panConfig;
         private Acuario2.PanelRedondeado panFiltroVentas;
         private System.Windows.Forms.Label lblCategoriaVenta;
         private System.Windows.Forms.ComboBox cboCategoriaVenta;

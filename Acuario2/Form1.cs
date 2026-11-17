@@ -25,7 +25,9 @@ namespace Acuario2
         {
             Dashboard,
             Inventario,
-            Ventas
+            Ventas,
+            Reportes,
+            Configuracion
         }
 
         private List<Producto> _productos = new List<Producto>();
@@ -118,20 +120,40 @@ namespace Acuario2
         {
             bool dashboard = vista == Vista.Dashboard;
             bool inventario = vista == Vista.Inventario;
+            bool ventas = vista == Vista.Ventas;
+            bool reportes = vista == Vista.Reportes;
+            bool configuracion = vista == Vista.Configuracion;
 
             panDashboard.Visible = dashboard;
             panInventario.Visible = inventario;
-            panVentas.Visible = vista == Vista.Ventas;
+            panVentas.Visible = ventas;
+            panReportes.Visible = reportes;
+            panConfig.Visible = configuracion;
 
-            lblTitulo.Text = dashboard ? "DASHBOARD" : inventario ? "INVENTARIO" : "VENTAS";
+            lblTitulo.Text = TituloVista(vista);
 
             ActivarBoton(btnInicio, dashboard);
             ActivarBoton(btnInventario, inventario);
-            ActivarBoton(btnVentas, vista == Vista.Ventas);
+            ActivarBoton(btnVentas, ventas);
+            ActivarBoton(btnReportes, reportes);
+            ActivarBoton(btnConfig, configuracion);
 
             if (dashboard) CargarDashboard();
             else if (inventario) CargarInventario();
-            else CargarVentas();
+            else if (ventas) CargarVentas();
+        }
+
+        /// <summary>Título que muestra la barra superior según la vista activa.</summary>
+        private static string TituloVista(Vista vista)
+        {
+            switch (vista)
+            {
+                case Vista.Inventario: return "INVENTARIO";
+                case Vista.Ventas: return "VENTAS";
+                case Vista.Reportes: return "REPORTES";
+                case Vista.Configuracion: return "CONFIGURACIÓN";
+                default: return "DASHBOARD";
+            }
         }
 
         private static void ActivarBoton(Button boton, bool activo)
@@ -157,14 +179,12 @@ namespace Acuario2
 
         private void btnReportes_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "El módulo de Reportes estará disponible en una próxima versión.",
-                "Reportes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            IrA(Vista.Reportes);
         }
 
         private void btnConfig_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "El módulo de Configuración estará disponible en una próxima versión.",
-                "Configuración", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            IrA(Vista.Configuracion);
         }
 
         private void btnSalir_Click(object sender, EventArgs e)
