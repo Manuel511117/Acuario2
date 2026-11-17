@@ -684,6 +684,7 @@
             this.btnActualizarVentas.TabIndex = 3;
             this.btnActualizarVentas.TabStop = false;
             this.btnActualizarVentas.Text = "Actualizar";
+            this.btnActualizarVentas.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnActualizarVentas.UseVisualStyleBackColor = false;
             this.btnActualizarVentas.Click += new System.EventHandler(this.btnActualizarVentas_Click);
             // 
