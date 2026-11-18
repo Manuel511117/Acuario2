@@ -37,6 +37,11 @@ namespace Acuario2
         private int _hoverColumna = -1;
         private bool _inicializandoVentas;
 
+        private Label _lblReportesSubtitulo;
+        private Button _btnExportarReporte;
+        private ControlReportes _controlReportes;
+        private ControlConfiguracion _controlConfig;
+
         public Form1()
         {
             InitializeComponent();
@@ -64,6 +69,40 @@ namespace Acuario2
             cboCategoriaVenta.Items.AddRange(ConexionDB.CategoriasVenta);
             SeleccionarCategoriaInicial();
             _inicializandoVentas = false;
+
+            // Subtítulo de reportes en la barra superior
+            _lblReportesSubtitulo = new Label
+            {
+                Text = "Analiza el desempeño y estado de tus acuarios",
+                Font = UiUtil.Fuente(9.5f, FontStyle.Regular),
+                ForeColor = Color.FromArgb(148, 178, 204),
+                Location = new Point(40, 68),
+                AutoSize = true,
+                Visible = false
+            };
+            panTopBar.Controls.Add(_lblReportesSubtitulo);
+
+            // Botón Exportar Reporte en la barra superior derecha
+            _btnExportarReporte = new Button
+            {
+                Text = "📥  Exportar reporte ▾",
+                Font = UiUtil.Fuente(9f, FontStyle.Regular),
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(2, 74, 108),
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(160, 36),
+                Location = new Point(panTopBar.Width - 340, 36),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Cursor = Cursors.Hand,
+                Visible = false
+            };
+            _btnExportarReporte.FlatAppearance.BorderColor = Color.FromArgb(4, 113, 155);
+            UiUtil.Redondear(_btnExportarReporte, 10);
+            _btnExportarReporte.Click += (s, args) =>
+            {
+                if (_controlReportes != null) _controlReportes.ExportarReporte();
+            };
+            panTopBar.Controls.Add(_btnExportarReporte);
 
             IrA(Vista.Dashboard);
         }
@@ -132,6 +171,9 @@ namespace Acuario2
 
             lblTitulo.Text = TituloVista(vista);
 
+            if (_lblReportesSubtitulo != null) _lblReportesSubtitulo.Visible = reportes;
+            if (_btnExportarReporte != null) _btnExportarReporte.Visible = reportes;
+
             ActivarBoton(btnInicio, dashboard);
             ActivarBoton(btnInventario, inventario);
             ActivarBoton(btnVentas, ventas);
@@ -141,6 +183,8 @@ namespace Acuario2
             if (dashboard) CargarDashboard();
             else if (inventario) CargarInventario();
             else if (ventas) CargarVentas();
+            else if (reportes) CargarReportes();
+            else if (configuracion) CargarConfiguracion();
         }
 
         /// <summary>Título que muestra la barra superior según la vista activa.</summary>
@@ -660,22 +704,48 @@ namespace Acuario2
 
             DialogResult r = MessageBox.Show(this,
                 "¿Registrar la venta de " + unidades + (unidades == 1 ? " unidad" : " unidades") +
-                " por C$ " + total.ToString("0.00") + "?\r\n\r\n" +
-                "Se descontará el stock del inventario. No se guardará un historial de ventas.",
+                " por $" + total.ToString("N2") + "?\r\n\r\n" +
+                "Se descontará el stock del inventario y se generará el ticket de compra.",
                 "Registrar venta",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2);
+                MessageBoxDefaultButton.Button1);
 
             if (r != DialogResult.Yes) return;
 
             string mensaje;
             if (ConexionDB.DescontarStock(_carrito, out mensaje))
             {
+                // Respaldar copia de los ítems vendidos para el ticket y el historial
+                List<ItemCarrito> itemsVendidos = new List<ItemCarrito>(_carrito);
+                foreach (ItemCarrito it in itemsVendidos)
+                {
+                    if (it == null || it.Producto == null) continue;
+                    Venta v = new Venta
+                    {
+                        ProductoId = it.Producto.Id,
+                        Producto = it.Producto.Nombre,
+                        Categoria = it.Producto.Categoria,
+                        Acuario = "Acuario Tropical 1",
+                        Cantidad = it.Cantidad,
+                        Precio = it.Producto.Precio,
+                        Total = it.Subtotal,
+                        Fecha = DateTime.Now,
+                        Usuario = Usuario
+                    };
+                    ConexionDB.RegistrarVenta(v, out _);
+                }
+
                 _carrito.Clear();
                 CargarVentas();
-                AvisoVentas("Venta registrada. Stock actualizado.", false);
+                AvisoVentas("✓ Venta registrada exitosamente.", false);
                 lblAvisoVentas.ForeColor = Color.FromArgb(4, 113, 122);
+
+                // Mostrar la vista previa del Ticket con opción de Imprimir o guardar en PDF
+                using (VisorTicket ticket = new VisorTicket(itemsVendidos, total, Usuario))
+                {
+                    ticket.ShowDialog(this);
+                }
             }
             else
             {
@@ -826,6 +896,38 @@ namespace Acuario2
         private bool EsColumnaBoton(int indice)
         {
             return indice >= 0 && (indice == colEditar.Index || indice == colEliminar.Index);
+        }
+
+        // ============================================================
+        //  Reportes
+        // ============================================================
+
+        private void CargarReportes()
+        {
+            if (_controlReportes == null)
+            {
+                _controlReportes = new ControlReportes();
+                _controlReportes.Dock = DockStyle.Fill;
+                panReportes.Controls.Clear();
+                panReportes.Controls.Add(_controlReportes);
+            }
+            _controlReportes.Recargar();
+        }
+
+        // ============================================================
+        //  Configuración
+        // ============================================================
+
+        private void CargarConfiguracion()
+        {
+            if (_controlConfig == null)
+            {
+                _controlConfig = new ControlConfiguracion();
+                _controlConfig.Dock = DockStyle.Fill;
+                panConfig.Controls.Clear();
+                panConfig.Controls.Add(_controlConfig);
+            }
+            _controlConfig.Recargar(Usuario);
         }
     }
 }
