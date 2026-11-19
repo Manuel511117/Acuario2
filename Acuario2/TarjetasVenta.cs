@@ -70,7 +70,7 @@ namespace Acuario2
             Label lblPrecio = new Label();
             lblPrecio.Location = new Point(12, 178);
             lblPrecio.Size = new Size(92, 26);
-            lblPrecio.Text = "C$ " + _producto.Precio.ToString("0.00");
+            lblPrecio.Text = "$ " + _producto.Precio.ToString("0.00");
             lblPrecio.Font = UiUtil.Fuente(11.5f, FontStyle.Bold);
             lblPrecio.ForeColor = Navy;
             lblPrecio.TextAlign = ContentAlignment.MiddleLeft;
@@ -263,9 +263,9 @@ namespace Acuario2
             if (Item == null || Item.Producto == null) return;
 
             _lblNombre.Text = Item.Producto.Nombre;
-            _lblUnitario.Text = "C$ " + Item.Producto.Precio.ToString("0.00") + " c/u  ·  " + Item.Producto.Categoria;
+            _lblUnitario.Text = "$ " + Item.Producto.Precio.ToString("0.00") + " c/u  ·  " + Item.Producto.Categoria;
             _lblCantidad.Text = Item.Cantidad.ToString();
-            _lblSubtotal.Text = "C$ " + Item.Subtotal.ToString("0.00");
+            _lblSubtotal.Text = "$ " + Item.Subtotal.ToString("0.00");
 
             _btnMenos.Enabled = Item.Cantidad > 1;
             _btnMas.Enabled = Item.Cantidad < Item.Producto.Cantidad;

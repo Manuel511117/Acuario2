@@ -207,13 +207,13 @@ namespace Acuario2
                 Size = new Size(100, 24)
             };
 
-            lblEstadoBdTitulo = CrearEtiqueta("Estado de conexión a base de datos:", new Point(140, 92));
+            lblEstadoBdTitulo = CrearEtiqueta("Estado de conexión a base de datos:", new Point(200, 92));
             lblEstadoBd = new Label
             {
                 Text = ConexionDB.EstaConfiguradaCadena() ? "🟢  En línea (MySQL Aiven)" : "🟡  Modo local / Demostración",
                 Font = UiUtil.Fuente(8.5f, FontStyle.Bold),
                 ForeColor = ConexionDB.EstaConfiguradaCadena() ? Color.FromArgb(22, 163, 74) : Color.FromArgb(202, 138, 4),
-                Location = new Point(140, 112),
+                Location = new Point(200, 112),
                 AutoSize = true
             };
 
@@ -247,8 +247,20 @@ namespace Acuario2
             UiUtil.Redondear(btnGuardarAjustes, 8);
             btnGuardarAjustes.Click += (s, e) =>
             {
-                lblAvisoAjustes.ForeColor = Color.FromArgb(22, 163, 74);
-                lblAvisoAjustes.Text = "✓ Preferencias guardadas correctamente.";
+                bool okNegocio = ConexionDB.GuardarAjuste("negocio", txtNombreNegocio.Text.Trim());
+                bool okMoneda = ConexionDB.GuardarAjuste("moneda", cboMoneda.Text);
+                bool okStock = ConexionDB.GuardarAjuste("stock_bajo", ((int)nudStockBajo.Value).ToString());
+
+                if (okNegocio && okMoneda && okStock)
+                {
+                    lblAvisoAjustes.ForeColor = Color.FromArgb(22, 163, 74);
+                    lblAvisoAjustes.Text = "✓ Preferencias guardadas correctamente.";
+                }
+                else
+                {
+                    lblAvisoAjustes.ForeColor = Color.FromArgb(220, 38, 38);
+                    lblAvisoAjustes.Text = "No se pudieron guardar las preferencias: sin conexión a la base de datos.";
+                }
             };
 
             lblAvisoAjustes = new Label
@@ -473,6 +485,19 @@ namespace Acuario2
         private void CargarValoresIniciales()
         {
             lblUsuarioInfo.Text = "Usuario activo: " + UsuarioActual + "  ·  Rol: Administrador";
+
+            // Preferencias guardadas en la base de datos
+            txtNombreNegocio.Text = ConexionDB.LeerAjuste("negocio", txtNombreNegocio.Text);
+
+            string moneda = ConexionDB.LeerAjuste("moneda", cboMoneda.Text);
+            if (cboMoneda.Items.Contains(moneda)) cboMoneda.SelectedItem = moneda;
+            else cboMoneda.SelectedIndex = 0;
+
+            int stockBajo;
+            if (int.TryParse(ConexionDB.LeerAjuste("stock_bajo", ((int)nudStockBajo.Value).ToString()), out stockBajo))
+            {
+                nudStockBajo.Value = Math.Min(Math.Max(stockBajo, (int)nudStockBajo.Minimum), (int)nudStockBajo.Maximum);
+            }
         }
 
         public void Recargar(string usuario)

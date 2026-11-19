@@ -89,7 +89,7 @@ namespace Acuario2
                 ColorBorde = Color.FromArgb(226, 232, 240),
                 BackColor = Color.White,
                 Location = new Point(16, 8),
-                Size = new Size(980, 74),
+                Size = new Size(980, 110),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
 
@@ -194,7 +194,7 @@ namespace Acuario2
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
             btnAplicarFiltros.FlatAppearance.BorderSize = 0;
-            btnAplicarFiltros.Location = new Point(760, 30);
+            btnAplicarFiltros.Location = new Point(671, 72);
             UiUtil.Redondear(btnAplicarFiltros, 8);
             btnAplicarFiltros.Click += (s, e) => { _paginaActual = 1; Recargar(); };
             panFiltros.Controls.Add(btnAplicarFiltros);
@@ -212,7 +212,7 @@ namespace Acuario2
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
             btnLimpiarFiltros.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
-            btnLimpiarFiltros.Location = new Point(782, 30);
+            btnLimpiarFiltros.Location = new Point(777, 72);
             UiUtil.Redondear(btnLimpiarFiltros, 8);
             btnLimpiarFiltros.Click += BtnLimpiarFiltros_Click;
             panFiltros.Controls.Add(btnLimpiarFiltros);
@@ -230,7 +230,7 @@ namespace Acuario2
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
             btnExportarFiltros.FlatAppearance.BorderColor = Color.FromArgb(4, 113, 155);
-            btnExportarFiltros.Location = new Point(874, 30);
+            btnExportarFiltros.Location = new Point(871, 72);
             UiUtil.Redondear(btnExportarFiltros, 8);
             btnExportarFiltros.Click += (s, e) => ExportarReporte();
             panFiltros.Controls.Add(btnExportarFiltros);
@@ -240,7 +240,7 @@ namespace Acuario2
             // 2. Contenedor de las 3 Tarjetas KPI intermedias (Altura: 175px)
             panCardsContainer = new Panel
             {
-                Location = new Point(16, 88),
+                Location = new Point(16, 124),
                 Size = new Size(980, 175),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -369,7 +369,7 @@ namespace Acuario2
                 Radio = 12,
                 ColorBorde = Color.FromArgb(226, 232, 240),
                 BackColor = Color.White,
-                Location = new Point(16, 270),
+                Location = new Point(16, 306),
                 Size = new Size(980, 255),
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -613,10 +613,19 @@ namespace Acuario2
             // Actualizar Tarjeta 2: Ventas por categoría (Dona + Leyenda)
             var catColors = new Dictionary<string, Color>(StringComparer.OrdinalIgnoreCase)
             {
-                { "Peces", Color.FromArgb(4, 175, 182) },       // Cian
-                { "Plantas", Color.FromArgb(82, 196, 104) },     // Verde
-                { "Alimentos", Color.FromArgb(245, 176, 65) },   // Ámbar
-                { "Accesorios", Color.FromArgb(142, 68, 173) }   // Púrpura
+                // Categorías reales del inventario
+                { "Peces", Color.FromArgb(4, 175, 182) },            // Cian
+                { "Especies exóticas", Color.FromArgb(230, 126, 34) }, // Naranja
+                { "Algas", Color.FromArgb(82, 196, 104) },           // Verde
+                { "Pecera", Color.FromArgb(52, 152, 219) },          // Azul
+                { "Decoraciones", Color.FromArgb(231, 76, 60) },     // Rojo
+                { "Filtros", Color.FromArgb(142, 68, 173) },         // Púrpura
+                { "Arena", Color.FromArgb(214, 171, 107) },          // Arena
+                { "Comida para pez", Color.FromArgb(245, 176, 65) }, // Ámbar
+                // Categorías de las ventas de demostración
+                { "Plantas", Color.FromArgb(82, 196, 104) },         // Verde
+                { "Alimentos", Color.FromArgb(245, 176, 65) },       // Ámbar
+                { "Accesorios", Color.FromArgb(142, 68, 173) }       // Púrpura
             };
             Color colorDefecto = Color.FromArgb(52, 152, 219);
 

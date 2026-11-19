@@ -1234,7 +1234,7 @@
             this.lblTotalVenta.Name = "lblTotalVenta";
             this.lblTotalVenta.Size = new System.Drawing.Size(184, 30);
             this.lblTotalVenta.TabIndex = 4;
-            this.lblTotalVenta.Text = "C$ 0.00";
+            this.lblTotalVenta.Text = "$ 0.00";
             this.lblTotalVenta.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblTotalVentas

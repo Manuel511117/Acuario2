@@ -81,6 +81,8 @@ namespace Acuario2
                 Visible = false
             };
             panTopBar.Controls.Add(_lblReportesSubtitulo);
+            // Los controles agregados en runtime quedan detrás del título: traerlos al frente
+            _lblReportesSubtitulo.BringToFront();
 
             // Botón Exportar Reporte en la barra superior derecha
             _btnExportarReporte = new Button
@@ -103,6 +105,7 @@ namespace Acuario2
                 if (_controlReportes != null) _controlReportes.ExportarReporte();
             };
             panTopBar.Controls.Add(_btnExportarReporte);
+            _btnExportarReporte.BringToFront();
 
             IrA(Vista.Dashboard);
         }
@@ -313,13 +316,14 @@ namespace Acuario2
             stock.TextAlign = ContentAlignment.MiddleLeft;
 
             Label badge = new Label();
-            badge.Text = "Agotado";
+            bool agotado = p.Cantidad <= 0;
+            badge.Text = agotado ? "Agotado" : "Stock bajo";
             badge.Font = UiUtil.Fuente(8.75f, FontStyle.Bold);
-            badge.BackColor = Color.FromArgb(249, 214, 209);
-            badge.ForeColor = Color.FromArgb(178, 58, 44);
+            badge.BackColor = agotado ? Color.FromArgb(249, 214, 209) : Color.FromArgb(254, 243, 199);
+            badge.ForeColor = agotado ? Color.FromArgb(178, 58, 44) : Color.FromArgb(184, 134, 11);
             badge.TextAlign = ContentAlignment.MiddleCenter;
-            badge.Location = new Point(178, 17);
-            badge.Size = new Size(62, 24);
+            badge.Location = new Point(176, 17);
+            badge.Size = new Size(72, 24);
             UiUtil.Redondear(badge, 12);
 
             fila.Controls.Add(nombre);
@@ -364,6 +368,7 @@ namespace Acuario2
                 if (okTexto && okEspecie) filtrados.Add(p);
             }
 
+            int umbralStock = ConexionDB.UmbralStockBajo();
             dgvProductos.Rows.Clear();
             foreach (Producto p in filtrados)
             {
@@ -375,7 +380,7 @@ namespace Acuario2
                     p.Cantidad,
                     p.Precio,
                     UiUtil.Minatura(p.Imagen, 40),
-                    p.Cantidad <= 3 ? "Agotado" : "Disponible",
+                    p.Cantidad <= 0 ? "Agotado" : (p.Cantidad <= umbralStock ? "Bajo" : "Disponible"),
                     "",
                     "");
                 dgvProductos.Rows[i].Tag = p;
@@ -615,7 +620,7 @@ namespace Acuario2
             if (_carrito.Count == 0) lblCarritoVacio.BringToFront();
 
             decimal total = _carrito.Sum(i => i.Subtotal);
-            lblTotalVenta.Text = "C$ " + total.ToString("0.00");
+            lblTotalVenta.Text = "$ " + total.ToString("0.00");
             btnRegistrarVenta.Enabled = _carrito.Count > 0;
         }
 
@@ -713,29 +718,32 @@ namespace Acuario2
 
             if (r != DialogResult.Yes) return;
 
-            string mensaje;
-            if (ConexionDB.DescontarStock(_carrito, out mensaje))
-            {
-                // Respaldar copia de los ítems vendidos para el ticket y el historial
-                List<ItemCarrito> itemsVendidos = new List<ItemCarrito>(_carrito);
-                foreach (ItemCarrito it in itemsVendidos)
-                {
-                    if (it == null || it.Producto == null) continue;
-                    Venta v = new Venta
-                    {
-                        ProductoId = it.Producto.Id,
-                        Producto = it.Producto.Nombre,
-                        Categoria = it.Producto.Categoria,
-                        Acuario = "Acuario Tropical 1",
-                        Cantidad = it.Cantidad,
-                        Precio = it.Producto.Precio,
-                        Total = it.Subtotal,
-                        Fecha = DateTime.Now,
-                        Usuario = Usuario
-                    };
-                    ConexionDB.RegistrarVenta(v, out _);
-                }
+            // Respaldar copia de los ítems vendidos para el ticket y el historial
+            List<ItemCarrito> itemsVendidos = new List<ItemCarrito>(_carrito);
 
+            // Construir las filas de la venta (una por línea del carrito)
+            List<Venta> ventas = new List<Venta>();
+            foreach (ItemCarrito it in itemsVendidos)
+            {
+                if (it == null || it.Producto == null) continue;
+                ventas.Add(new Venta
+                {
+                    ProductoId = it.Producto.Id,
+                    Producto = it.Producto.Nombre,
+                    Categoria = it.Producto.Categoria,
+                    Acuario = "Acuario Tropical 1",
+                    Cantidad = it.Cantidad,
+                    Precio = it.Producto.Precio,
+                    Total = it.Subtotal,
+                    Fecha = DateTime.Now,
+                    Usuario = Usuario
+                });
+            }
+
+            // Una sola transacción: valida el stock, descuenta y registra el historial
+            string mensaje;
+            if (ConexionDB.RegistrarVentas(ventas, out mensaje))
+            {
                 _carrito.Clear();
                 CargarVentas();
                 AvisoVentas("✓ Venta registrada exitosamente.", false);

@@ -177,7 +177,12 @@ namespace Acuario2
                         total DECIMAL(12,2) NOT NULL,
                         fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         usuario VARCHAR(50) NULL,
+                        acuario VARCHAR(100) NULL DEFAULT 'Acuario Tropical 1',
                         INDEX idx_ventas_fecha (fecha)
+                    );
+                    CREATE TABLE IF NOT EXISTS ajustes (
+                        clave VARCHAR(50) NOT NULL PRIMARY KEY,
+                        valor VARCHAR(255) NULL
                     );";
 
                 using (MySqlCommand cmd = new MySqlCommand(ddl, conn))
@@ -209,6 +214,31 @@ namespace Acuario2
                     {
                         upd.ExecuteNonQuery();
                     }
+                }
+
+                // Migración: agregar la columna acuario en ventas (la usa el filtro de reportes)
+                bool existeAcuario = false;
+                using (MySqlCommand chk = new MySqlCommand(
+                    "SELECT COUNT(*) FROM information_schema.columns " +
+                    "WHERE table_schema = DATABASE() AND table_name = 'ventas' AND column_name = 'acuario'", conn))
+                {
+                    existeAcuario = Convert.ToInt64(chk.ExecuteScalar()) > 0;
+                }
+
+                if (!existeAcuario)
+                {
+                    using (MySqlCommand alt = new MySqlCommand(
+                        "ALTER TABLE ventas ADD COLUMN acuario VARCHAR(100) NULL DEFAULT 'Acuario Tropical 1'", conn))
+                    {
+                        alt.ExecuteNonQuery();
+                    }
+                }
+
+                // Normalizar ventas existentes sin acuario
+                using (MySqlCommand norm = new MySqlCommand(
+                    "UPDATE ventas SET acuario = 'Acuario Tropical 1' WHERE acuario IS NULL OR acuario = ''", conn))
+                {
+                    norm.ExecuteNonQuery();
                 }
 
                 // Normalizar filas sin categoría
@@ -261,6 +291,77 @@ namespace Acuario2
             {
                 System.Diagnostics.Debug.WriteLine("AsegurarTablas error: " + ex);
             }
+        }
+
+        // ============================================================
+        //  Preferencias del sistema (tabla 'ajustes')
+        // ============================================================
+
+        private static readonly Dictionary<string, string> _ajustesCache =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Lee una preferencia guardada; devuelve <paramref name="defecto"/> si no existe.</summary>
+        public static string LeerAjuste(string clave, string defecto)
+        {
+            string enCache;
+            if (_ajustesCache.TryGetValue(clave, out enCache)) return enCache;
+
+            if (ModoOffline || !EstaConfiguradaCadena()) return defecto;
+
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlCommand cmd = new MySqlCommand("SELECT valor FROM ajustes WHERE clave = @clave", conn))
+                {
+                    cmd.Parameters.AddWithValue("@clave", clave);
+                    object res = cmd.ExecuteScalar();
+                    string valor = (res == null || res == DBNull.Value) ? defecto : Convert.ToString(res);
+                    _ajustesCache[clave] = valor;
+                    return valor;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("LeerAjuste: " + ex);
+                return defecto;
+            }
+        }
+
+        /// <summary>Guarda una preferencia (INSERT ... ON DUPLICATE KEY UPDATE). Devuelve false si no hay BD.</summary>
+        public static bool GuardarAjuste(string clave, string valor)
+        {
+            _ajustesCache[clave] = valor ?? string.Empty;
+
+            if (ModoOffline || !EstaConfiguradaCadena()) return true;
+
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlCommand cmd = new MySqlCommand(
+                    "INSERT INTO ajustes (clave, valor) VALUES (@clave, @valor) " +
+                    "ON DUPLICATE KEY UPDATE valor = @valor", conn))
+                {
+                    cmd.Parameters.AddWithValue("@clave", clave);
+                    cmd.Parameters.AddWithValue("@valor", valor ?? (object)DBNull.Value);
+                    cmd.ExecuteNonQuery();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("GuardarAjuste: " + ex);
+                return false;
+            }
+        }
+
+        /// <summary>Umbral de «stock bajo» configurado en Preferencias (1..50, por defecto 3).</summary>
+        public static int UmbralStockBajo()
+        {
+            int n;
+            if (!int.TryParse(LeerAjuste("stock_bajo", "3"), out n)) n = 3;
+            if (n < 1) n = 1;
+            if (n > 50) n = 50;
+            return n;
         }
 
         /// <summary>Prueba la conexión. Devuelve un mensaje corto con el resultado.</summary>
@@ -681,7 +782,7 @@ namespace Acuario2
             {
                 using (MySqlConnection conn = Abrir())
                 using (MySqlCommand cmd = new MySqlCommand(
-                    "SELECT id, producto_id, producto, categoria, cantidad, precio, total, fecha, usuario " +
+                    "SELECT id, producto_id, producto, categoria, cantidad, precio, total, fecha, usuario, acuario " +
                     "FROM ventas ORDER BY id DESC", conn))
                 using (MySqlDataReader r = cmd.ExecuteReader())
                 {
@@ -764,12 +865,13 @@ namespace Acuario2
 
                         v.Producto = nombre;
                         using (MySqlCommand ins = new MySqlCommand(
-                            "INSERT INTO ventas (producto_id, producto, categoria, cantidad, precio, total, fecha, usuario) " +
-                            "VALUES (@producto_id, @producto, @categoria, @cantidad, @precio, @total, @fecha, @usuario)", conn, tx))
+                            "INSERT INTO ventas (producto_id, producto, categoria, acuario, cantidad, precio, total, fecha, usuario) " +
+                            "VALUES (@producto_id, @producto, @categoria, @acuario, @cantidad, @precio, @total, @fecha, @usuario)", conn, tx))
                         {
                             ins.Parameters.AddWithValue("@producto_id", v.ProductoId);
                             ins.Parameters.AddWithValue("@producto", v.Producto);
                             ins.Parameters.AddWithValue("@categoria", v.Categoria);
+                            ins.Parameters.AddWithValue("@acuario", string.IsNullOrEmpty(v.Acuario) ? (object)"Acuario Tropical 1" : v.Acuario);
                             ins.Parameters.AddWithValue("@cantidad", v.Cantidad);
                             ins.Parameters.AddWithValue("@precio", v.Precio);
                             ins.Parameters.AddWithValue("@total", v.Total);
@@ -800,6 +902,141 @@ namespace Acuario2
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("RegistrarVenta: " + ex);
+                mensaje = "No se pudo registrar la venta en la BD.";
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Registra todas las líneas del carrito (historial + descuento de stock) en una sola transacción:
+        /// o se registra la venta completa o no se registra nada.
+        /// </summary>
+        public static bool RegistrarVentas(List<Venta> ventas, out string mensaje)
+        {
+            mensaje = string.Empty;
+
+            if (ventas == null || ventas.Count == 0) { mensaje = "El carrito está vacío."; return false; }
+
+            foreach (Venta v in ventas)
+            {
+                if (v == null) { mensaje = "Hay datos de venta inválidos."; return false; }
+                if (v.ProductoId <= 0) { mensaje = "Seleccione un producto."; return false; }
+                if (v.Cantidad <= 0) { mensaje = "La cantidad debe ser mayor que cero."; return false; }
+                if (v.Precio < 0) { mensaje = "El precio no puede ser negativo."; return false; }
+                if (string.IsNullOrWhiteSpace(v.Categoria)) { mensaje = "Seleccione una categoría."; return false; }
+
+                v.Total = Math.Round(v.Cantidad * v.Precio, 2);
+                v.Fecha = DateTime.Now;
+                if (string.IsNullOrEmpty(v.Acuario)) v.Acuario = "Acuario Tropical 1";
+            }
+
+            if (ModoOffline || !EstaConfiguradaCadena())
+            {
+                // Validar todo el stock primero para no dejar el modo local a medias
+                Dictionary<int, int> requerido = new Dictionary<int, int>();
+                foreach (Venta v in ventas)
+                {
+                    if (requerido.ContainsKey(v.ProductoId)) requerido[v.ProductoId] += v.Cantidad;
+                    else requerido[v.ProductoId] = v.Cantidad;
+                }
+
+                foreach (KeyValuePair<int, int> par in requerido)
+                {
+                    Producto prod = _mockProductos.FirstOrDefault(x => x.Id == par.Key);
+                    if (prod == null) { mensaje = "El producto ya no existe en el inventario."; return false; }
+                    if (prod.Cantidad < par.Value)
+                    {
+                        mensaje = "Stock insuficiente: solo quedan " + prod.Cantidad + " unidades de «" + prod.Nombre + "».";
+                        return false;
+                    }
+                }
+
+                foreach (Venta v in ventas)
+                {
+                    Producto prod = _mockProductos.FirstOrDefault(x => x.Id == v.ProductoId);
+                    v.Id = ++_mockVentaId;
+                    v.Producto = prod.Nombre;
+                    _mockVentas.Add(v);
+                    prod.Cantidad -= v.Cantidad;
+                }
+                return true;
+            }
+
+            try
+            {
+                using (MySqlConnection conn = Abrir())
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (Venta v in ventas)
+                        {
+                            int stock;
+                            string nombre;
+                            using (MySqlCommand sel = new MySqlCommand(
+                                "SELECT nombre, cantidad FROM productos WHERE id = @id FOR UPDATE", conn, tx))
+                            {
+                                sel.Parameters.AddWithValue("@id", v.ProductoId);
+                                using (MySqlDataReader r = sel.ExecuteReader())
+                                {
+                                    if (!r.Read())
+                                    {
+                                        mensaje = "El producto ya no existe en el inventario.";
+                                        tx.Rollback();
+                                        return false;
+                                    }
+                                    nombre = r.GetString(0);
+                                    stock = r.GetInt32(1);
+                                }
+                            }
+
+                            if (stock < v.Cantidad)
+                            {
+                                mensaje = "Stock insuficiente: solo quedan " + stock + " unidades de «" + nombre + "».";
+                                tx.Rollback();
+                                return false;
+                            }
+
+                            v.Producto = nombre;
+                            using (MySqlCommand ins = new MySqlCommand(
+                                "INSERT INTO ventas (producto_id, producto, categoria, acuario, cantidad, precio, total, fecha, usuario) " +
+                                "VALUES (@producto_id, @producto, @categoria, @acuario, @cantidad, @precio, @total, @fecha, @usuario)", conn, tx))
+                            {
+                                ins.Parameters.AddWithValue("@producto_id", v.ProductoId);
+                                ins.Parameters.AddWithValue("@producto", v.Producto);
+                                ins.Parameters.AddWithValue("@categoria", v.Categoria);
+                                ins.Parameters.AddWithValue("@acuario", v.Acuario);
+                                ins.Parameters.AddWithValue("@cantidad", v.Cantidad);
+                                ins.Parameters.AddWithValue("@precio", v.Precio);
+                                ins.Parameters.AddWithValue("@total", v.Total);
+                                ins.Parameters.AddWithValue("@fecha", v.Fecha);
+                                ins.Parameters.AddWithValue("@usuario", string.IsNullOrEmpty(v.Usuario) ? (object)DBNull.Value : v.Usuario);
+                                ins.ExecuteNonQuery();
+                                v.Id = (int)ins.LastInsertedId;
+                            }
+
+                            using (MySqlCommand upd = new MySqlCommand(
+                                "UPDATE productos SET cantidad = cantidad - @cantidad WHERE id = @id", conn, tx))
+                            {
+                                upd.Parameters.AddWithValue("@cantidad", v.Cantidad);
+                                upd.Parameters.AddWithValue("@id", v.ProductoId);
+                                upd.ExecuteNonQuery();
+                            }
+                        }
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        try { tx.Rollback(); } catch { }
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("RegistrarVentas: " + ex);
                 mensaje = "No se pudo registrar la venta en la BD.";
                 return false;
             }
@@ -1060,16 +1297,18 @@ namespace Acuario2
             }
         }
 
-        /// <summary>Productos agotados (cantidad &lt;= 3).</summary>
+        /// <summary>Productos con stock bajo o agotado (cantidad &lt;= umbral de preferencias, por defecto 3).</summary>
         public static int ProductosAgotados()
         {
-            if (ModoOffline || !EstaConfiguradaCadena()) return _mockProductos.Count(x => x.Cantidad <= 3);
+            int umbral = UmbralStockBajo();
 
-            try { return Convert.ToInt32(Escalar("SELECT COUNT(*) FROM productos WHERE cantidad <= 3")); }
+            if (ModoOffline || !EstaConfiguradaCadena()) return _mockProductos.Count(x => x.Cantidad <= umbral);
+
+            try { return Convert.ToInt32(Escalar("SELECT COUNT(*) FROM productos WHERE cantidad <= " + umbral)); }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("ProductosAgotados: " + ex);
-                return _mockProductos.Count(x => x.Cantidad <= 3);
+                return _mockProductos.Count(x => x.Cantidad <= umbral);
             }
         }
 
@@ -1175,14 +1414,15 @@ namespace Acuario2
             return datos;
         }
 
-        /// <summary>Productos con stock bajo (cantidad &lt;= 3) para el panel de alertas.</summary>
+        /// <summary>Productos con stock bajo (cantidad &lt;= umbral de preferencias) para el panel de alertas.</summary>
         public static List<Producto> InventarioBajo(out string mensaje)
         {
             mensaje = string.Empty;
+            int umbral = UmbralStockBajo();
 
             if (ModoOffline || !EstaConfiguradaCadena())
             {
-                return _mockProductos.Where(x => x.Cantidad <= 3)
+                return _mockProductos.Where(x => x.Cantidad <= umbral)
                                      .OrderBy(x => x.Cantidad)
                                      .Select(CopiarProducto)
                                      .ToList();
@@ -1194,7 +1434,7 @@ namespace Acuario2
                 using (MySqlConnection conn = Abrir())
                 using (MySqlCommand cmd = new MySqlCommand(
                     "SELECT id, nombre, especie, categoria, cantidad, precio, imagen FROM productos " +
-                    "WHERE cantidad <= 3 ORDER BY cantidad ASC", conn))
+                    "WHERE cantidad <= " + umbral + " ORDER BY cantidad ASC", conn))
                 using (MySqlDataReader r = cmd.ExecuteReader())
                 {
                     while (r.Read()) lista.Add(Leer(r));
@@ -1203,7 +1443,7 @@ namespace Acuario2
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("InventarioBajo: " + ex);
-                return _mockProductos.Where(x => x.Cantidad <= 3)
+                return _mockProductos.Where(x => x.Cantidad <= umbral)
                                      .OrderBy(x => x.Cantidad)
                                      .Select(CopiarProducto)
                                      .ToList();
@@ -1393,9 +1633,13 @@ namespace Acuario2
         {
             "Todas",
             "Peces",
-            "Plantas",
-            "Alimentos",
-            "Accesorios"
+            "Especies exóticas",
+            "Algas",
+            "Pecera",
+            "Decoraciones",
+            "Filtros",
+            "Arena",
+            "Comida para pez"
         };
     }
 }

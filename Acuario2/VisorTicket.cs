@@ -18,6 +18,7 @@ namespace Acuario2
         private readonly decimal _total;
         private readonly string _usuario;
         private readonly string _folio;
+        private readonly string _negocio;
         private readonly DateTime _fecha;
 
         private PanelRedondeado panTicket;
@@ -40,6 +41,7 @@ namespace Acuario2
             _usuario = string.IsNullOrEmpty(usuario) ? "admin" : usuario;
             _fecha = DateTime.Now;
             _folio = "TK-" + _fecha.ToString("yyyyMMdd") + "-" + (new Random().Next(100, 999));
+            _negocio = ConexionDB.LeerAjuste("negocio", "AquaControl");
 
             InicializarVentana();
             ConstruirTicketVisual();
@@ -47,7 +49,7 @@ namespace Acuario2
 
         private void InicializarVentana()
         {
-            this.Text = "Ticket de Venta - AquaControl";
+            this.Text = "Ticket de Venta - " + _negocio;
             this.Size = new Size(430, 680);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -85,7 +87,7 @@ namespace Acuario2
             // Título
             lblTitulo = new Label
             {
-                Text = "AQUACONTROL",
+                Text = _negocio.ToUpperInvariant(),
                 Font = UiUtil.Fuente(13f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(3, 50, 90),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -220,7 +222,7 @@ namespace Acuario2
             // Mensaje de pie
             lblMensajeGracias = new Label
             {
-                Text = "¡Gracias por su compra en AquaControl!\nConserve este ticket para cualquier cambio o garantía.\n*** Válido por 30 días ***",
+                Text = "¡Gracias por su compra en " + _negocio + "!\nConserve este ticket para cualquier cambio o garantía.\n*** Válido por 30 días ***",
                 Font = UiUtil.Fuente(7.75f, FontStyle.Regular),
                 ForeColor = Color.FromArgb(100, 116, 139),
                 TextAlign = ContentAlignment.MiddleCenter,
